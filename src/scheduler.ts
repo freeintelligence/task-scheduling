@@ -153,7 +153,7 @@ export class Scheduler {
 
     for(let i = 0; i < flags.length; i++) {
       const flag = flags[i]
-      const virtual_data = virtual.find(e => e.name.replace(/^[-]+/, '') == flag.name || e.name.replace(/^[-]+/, '') == flag.options.alias)
+      const virtual_data = virtual.find(e =>  this.isFlagAlias(e.name) ? e.name.replace(/^[-]+/, '') === flag.options.alias : e.name.replace(/^[-]+/, '') === flag.name)
 
       if(virtual_data) {
         flag.value = virtual_data.value
@@ -213,7 +213,7 @@ export class Scheduler {
    * Is flag alias (only alias)
    **/
   static isFlagAlias(task: string): boolean {
-    return /^\-([^\-])+$/g.test(name)
+    return /^\-([^\-])+$/g.test(task)
   }
 
   /*
@@ -230,8 +230,6 @@ export class Scheduler {
    * */
   static async execute(tasks: string[]) {
     const command = this.getCommand(tasks)
-
-    console.log(this.getVirtualFlags(tasks))
 
     if(command) {
       const gflags = this.getGlobalFlags(tasks)
