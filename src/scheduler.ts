@@ -34,8 +34,8 @@ export class Scheduler {
       description = description
       flags = flags
 
-      async run() {
-        await run()
+      async run(data) {
+        await run(data)
       }
     }
 
@@ -54,8 +54,8 @@ export class Scheduler {
    * */
   static registerSimpleDefault(run: Function) {
     const command = class extends BaseCommand {
-      async run() {
-        await run()
+      async run(data) {
+        await run(data)
       }
     }
 
@@ -158,10 +158,10 @@ export class Scheduler {
       if(virtual_data) {
         flag.value = virtual_data.value
 
-        if(flag.options.type == Boolean && (flag.value == 'false' || flag.value == 'FALSE' || flag.value === '0')) flag.value = false
-        if(flag.options.type == Boolean && (typeof flag.value == 'string')) flag.value = true
-        if(flag.options.type == Number) flag.value = Number(flag.value)
-        if(flag.options.type == Object) flag.value = JSON.parse(flag.value)
+        if(flag.options.type == 'boolean' && ((<string>flag.value).toLowerCase() == 'false' || flag.value === '0')) flag.value = false
+        else if(flag.options.type == 'boolean' && (typeof flag.value == 'string')) flag.value = true
+        else if(flag.options.type == 'number') flag.value = Number(flag.value)
+        else if(flag.options.type == 'object') flag.value = JSON.parse(flag.value)
       }
       else {
         flag.value = flag.options.default

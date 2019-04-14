@@ -3,10 +3,9 @@
  * */
 interface OptionsFlag {
   alias?: string,
-  type?: any,
-  subtype?: any,
+  type?: 'string'|'boolean'|'number'|'array'|'object',
+  subtype?: 'string'|'boolean'|'number'|'array'|'object',
   default?: any, // If it is "undefined" then the "flag" will be required
-  multiple?: boolean,
 }
 
 /*
