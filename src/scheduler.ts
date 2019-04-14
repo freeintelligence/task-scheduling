@@ -90,12 +90,13 @@ export class Scheduler {
           tmp.value = data[1]
         }
         else {
-          const next = tasks.length > i-1 ? tasks[++i] : undefined
-          
           tmp.name = task
 
-          if(next) {
+          const next = tasks.length > i-1 ? tasks[i+1] : undefined
+
+          if(next && !this.isFlag(next)) {
             tmp.value = next
+            i++
           }
           else {
             tmp.value = ''
@@ -229,6 +230,8 @@ export class Scheduler {
    * */
   static async execute(tasks: string[]) {
     const command = this.getCommand(tasks)
+
+    console.log(this.getVirtualFlags(tasks))
 
     if(command) {
       const gflags = this.getGlobalFlags(tasks)
