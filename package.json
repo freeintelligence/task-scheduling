@@ -1,0 +1,35 @@
+{
+  "name": "task-scheduling",
+  "version": "1.0.0-rc.1",
+  "description": "Argument management for console applications..",
+  "author": {
+    "name": "FreeIntelligence",
+    "email": "free04381@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/freeintelligence/task-scheduling.git"
+  },
+  "bugs": {
+    "url": "https://github.com/freeintelligence/task-scheduling/issues"
+  },
+  "homepage": "https://github.com/freeintelligence/task-scheduling#readme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "typescript",
+    "ts",
+    "task",
+    "tasks",
+    "scheduler",
+    "scheduling"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^11.13.4",
+    "typescript": "^3.4.3"
+  }
+}
