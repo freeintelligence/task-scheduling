@@ -4,7 +4,7 @@
 interface OptionsFlag {
   alias?: string,
   type?: 'string'|'boolean'|'number'|'array'|'object',
-  subtype?: 'string'|'boolean'|'number'|'array'|'object',
+  subtype?: 'string'|'boolean'|'number'|'object', // no 'array'
   default?: any, // If it is "undefined" then the "flag" will be required
 }
 
@@ -21,7 +21,7 @@ export class Flag {
     this.name = name
     this.options.alias = typeof options.alias == 'string' ? options.alias : undefined
     this.options.type = typeof options.type == 'string' ? options.type : 'string'
-    this.options.default = options.default
+    this.options.default = this.options.type == 'array' ? (typeof options.default !== 'undefined' && options.default instanceof Array ? options.default : (typeof options.default !== 'undefined' ? [options.default] : [])) : options.default
     this.options.subtype = options.subtype
   }
 

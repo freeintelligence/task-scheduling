@@ -11,6 +11,7 @@ export interface DataInterface {
   type?: 'flag'|'command',
   name?: string,
   value?: string,
+  remaining?: any[],
 }
 
 /*
@@ -114,6 +115,7 @@ export class Scheduler {
         tmp.name = task.trim()
       }
 
+      tmp.remaining = tasks.slice(i)
       data.push(tmp)
     }
 
@@ -144,6 +146,25 @@ export class Scheduler {
   }
 
   /*
+   * Parse flags value
+   * */
+  static parseFlagsValue(type: 'string'|'boolean'|'object'|'number'|'array', subtype: 'string'|'boolean'|'object'|'number', value: string, remaining?: any[]) {
+    if(type == 'string') return value
+    else if(type == 'boolean' && ((<string>value).toLowerCase() == 'false' || value === '0')) return false
+    else if(type == 'boolean' && (typeof value == 'string')) return true
+    else if(type == 'number') return Number(value)
+    else if(type == 'object') return JSON.parse(value)
+    else if(type == 'array') {
+      const val: any[] = []
+
+      for(let i = 0; i < remaining.length; i++) {
+        val.push(this.parseFlagsValue(subtype, null, remaining[i]))
+      }
+      return val
+    }
+  }
+
+  /*
    * Get the flags and their values by string
    * */
   static getVirtualFlags(tasks: string[]) {
@@ -162,12 +183,7 @@ export class Scheduler {
       const virtual_data = virtual.find(e =>  this.isFlagAlias(e.name) ? e.name.replace(/^[-]+/, '') === flag.options.alias : e.name.replace(/^[-]+/, '') === flag.name)
 
       if(virtual_data) {
-        flag.value = virtual_data.value
-
-        if(flag.options.type == 'boolean' && ((<string>flag.value).toLowerCase() == 'false' || flag.value === '0')) flag.value = false
-        else if(flag.options.type == 'boolean' && (typeof flag.value == 'string')) flag.value = true
-        else if(flag.options.type == 'number') flag.value = Number(flag.value)
-        else if(flag.options.type == 'object') flag.value = JSON.parse(flag.value)
+        flag.value = this.parseFlagsValue(flag.options.type, flag.options.subtype, virtual_data.value, virtual_data.remaining)
       }
       else {
         flag.value = flag.options.default
