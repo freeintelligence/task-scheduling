@@ -33,7 +33,7 @@ export class Helper {
   /*
    * Set header string
    * */
-  public header(str: string = 'comando(s)') {
+  public header(str: string = 'comando') {
     this.header_msg =
       magenta(' Uso: ')+'\n'+
       `    ${str} [opciones]`
@@ -79,13 +79,13 @@ export class Helper {
 
       this.commands_msg += '\n'
       this.commands_msg += cyan(('   '+command.name).padEnd(48))
-      this.commands_msg += '⇒ '+(typeof command.description == 'string' ? command.description : '')
+      this.commands_msg += '⇒ '+(typeof command.description == 'string' ? command.description : '---')
 
       if(command.flags instanceof Array && command.flags.length) {
         command.flags.forEach((flag: Flag) => {
           this.commands_msg += '\n'
           this.commands_msg += gray(('     '+(this.nullOrUndefined(flag.options.alias) ? '  ' : '-'+flag.options.alias)+' '+'[--'+flag.name+'='+flag.options.default+']').padEnd(48))
-          this.commands_msg += typeof flag.options.description != 'undefined' ? '  ⇒ '+flag.options.description : ''
+          this.commands_msg += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'
         })
       }
     })
@@ -104,9 +104,9 @@ export class Helper {
     if(typeof this.flags_msg == 'string' && this.flags_msg.length) this.msg += `${this.flags_msg}\n\n`
     if(typeof this.commands_msg == 'string' && this.commands_msg.length) this.msg += `${this.commands_msg}\n\n`
 
-    if(this.msg.length) this.msg = `\n${this.msg}`
+    this.msg = this.msg.trimRight()
 
-    this.msg = this.msg.trimRight()+'\n'
+    if(this.msg.length) this.msg = `\n${this.msg}\n`
 
     return this
   }

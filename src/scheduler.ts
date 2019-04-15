@@ -135,6 +135,13 @@ export class Scheduler {
   }
 
   /*
+   * Get the commands (all)
+   * */
+  static getGlobalCommands(): BaseCommand[] {
+    return this.commands
+  }
+
+  /*
    * Get the command
    * */
   static getCommand(tasks: string[]): BaseCommand {
@@ -227,7 +234,7 @@ export class Scheduler {
   /*
    * Get the global flags
    * */
-  static getGlobalFlags(tasks: string[]): Flag[] {
+  static getGlobalFlags(tasks: string[] = []): Flag[] {
     return this.getSpecificFlags(tasks, this.flags)
   }
 
@@ -310,7 +317,7 @@ export class Scheduler {
         const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
 
         if(tflags.length && this.configure.getConfig().strict_mode_on_flags) {
-          throw new FlagNotFoundError(tflags[0].name, tflags[0].value)
+          throw new FlagNotFoundError(tflags[0].name, tflags[0].value, command)
         }
 
         const method = ParameterDecorator.method(command, 'run')
@@ -330,10 +337,15 @@ export class Scheduler {
         new Helper().error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks)).generate().print()
       }
       else if(err instanceof FlagNotFoundError) {
-        new Helper().error(err.message).header().flags(this.getGlobalFlags(tasks)).generate().print()
+        if(err.command && err.command.name) {
+          new Helper().error(err.message).header(err.command.name).flags(this.getGlobalFlags(tasks).concat(err.command.flags)).generate().print()
+        }
+        else {
+          new Helper().error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks)).generate().print()
+        }
       }
       else if(err instanceof InvalidFlagValueError) {
-        new Helper().error(err.message).header().flags(this.getGlobalFlags(tasks)).generate().print()
+        new Helper().error(err.message).generate().print()
       }
       else {
         console.error(err.stack)
