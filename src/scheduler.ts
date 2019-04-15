@@ -304,6 +304,13 @@ export class Scheduler {
   }
 
   /*
+   * Get help message
+   * */
+  static help(): string {
+    return new Helper().header().commands(this.getGlobalCommands()).flags(this.getGlobalFlags()).generate().getMessage()
+  }
+
+  /*
    * Execute a command
    * */
   static async execute(tasks: string[]) {
