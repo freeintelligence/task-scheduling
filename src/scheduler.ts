@@ -3,6 +3,7 @@ import { BaseCommand } from './command'
 import { Flag } from './flag'
 import { Flags } from './types'
 import { Configure } from './configure'
+import { CommandNotFoundError } from './errors'
 
 /*
  *
@@ -142,6 +143,10 @@ export class Scheduler {
     if(!virtual) command = this.commands.find(e => (e as any).name == '' || typeof (e as any).name == 'undefined')
     else command = this.commands.find(e => (e as any).name == virtual)
 
+    if(!command && !this.default && this.configure.getConfig().strict_mode_on_commands) {
+      throw new CommandNotFoundError(virtual)
+    }
+
     return command ? command : this.default
   }
 
@@ -251,18 +256,28 @@ export class Scheduler {
    * Execute a command
    * */
   static async execute(tasks: string[]) {
-    const command = this.getCommand(tasks)
+    try {
+      const command = this.getCommand(tasks)
 
-    if(command) {
-      const gflags = this.getGlobalFlags(tasks)
-      const cflags = this.getCommandFlags(tasks, command)
-      const sflags = this.flagsToSimple(gflags.concat(cflags))
+      if(command) {
+        const gflags = this.getGlobalFlags(tasks)
+        const cflags = this.getCommandFlags(tasks, command)
+        const sflags = this.flagsToSimple(gflags.concat(cflags))
 
-      const method = ParameterDecorator.method(command, 'run')
+        const method = ParameterDecorator.method(command, 'run')
 
-      if(method) {
-        await command[method]({ flags: sflags })
+        if(method) {
+          try {
+            await command[method]({ flags: sflags })
+          }
+          catch(_err) {
+            this.configure.getConfig().catch(_err)
+          }
+        }
       }
+    }
+    catch(_err) {
+      console.error('se detecto un error', _err)
     }
   }
 
