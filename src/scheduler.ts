@@ -2,7 +2,11 @@ import { ParameterDecorator } from 'ts-ext-decorators'
 import { BaseCommand } from './command'
 import { Flag } from './flag'
 import { Flags } from './types'
+import { Configure } from './configure'
 
+/*
+ *
+ * */
 export interface DataInterface {
   type?: 'flag'|'command',
   name?: string,
@@ -13,6 +17,8 @@ export interface DataInterface {
  * Scheduler
  * */
 export class Scheduler {
+
+  public static configure: Configure = new Configure()
 
   private static commands: BaseCommand[] = [] // Commands container
   private static flags: Flag[] = [] // Flags container
