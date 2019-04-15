@@ -3,6 +3,7 @@ import { BaseCommand } from './command'
 import { Flag } from './flag'
 import { Flags } from './types'
 import { Configure } from './configure'
+import { Helper } from './helper'
 import { CommandNotFoundError, FlagNotFoundError, InvalidFlagValueError } from './errors'
 
 /*
@@ -326,16 +327,16 @@ export class Scheduler {
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {
-
+        new Helper().error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks)).generate().print()
       }
       else if(err instanceof FlagNotFoundError) {
-
+        new Helper().error(err.message).header().flags(this.getGlobalFlags(tasks)).generate().print()
       }
       else if(err instanceof InvalidFlagValueError) {
-
+        new Helper().error(err.message).header().flags(this.getGlobalFlags(tasks)).generate().print()
       }
       else {
-        console.error(err.message)
+        console.error(err.stack)
       }
     }
   }

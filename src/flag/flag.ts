@@ -2,6 +2,7 @@
  * Options
  * */
 interface OptionsFlag {
+  description?: string,
   alias?: string,
   type?: 'string'|'boolean'|'number'|'array'|'object',
   subtype?: 'string'|'boolean'|'number'|'object', // no 'array'
@@ -19,6 +20,7 @@ export class Flag {
 
   constructor(name: string, options: OptionsFlag = {}) {
     this.name = name
+    this.options.description = typeof options.description == 'string' ? options.description : ''
     this.options.alias = typeof options.alias == 'string' ? options.alias : undefined
     this.options.type = typeof options.type == 'string' ? options.type : 'string'
     this.options.default = this.options.type == 'array' ? (typeof options.default !== 'undefined' && options.default instanceof Array ? options.default : (typeof options.default !== 'undefined' ? [options.default] : [])) : options.default
