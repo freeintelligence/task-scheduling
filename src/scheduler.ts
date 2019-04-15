@@ -3,7 +3,7 @@ import { BaseCommand } from './command'
 import { Flag } from './flag'
 import { Flags } from './types'
 import { Configure } from './configure'
-import { CommandNotFoundError } from './errors'
+import { CommandNotFoundError, FlagNotFoundError, InvalidFlagValueError } from './errors'
 
 /*
  *
@@ -151,22 +151,45 @@ export class Scheduler {
   }
 
   /*
+   * Fix flag name (remove -)
+   * */
+  static fixFlagName(name: string): string {
+    return name.replace(/^[-]+/, '')
+  }
+
+  /*
    * Parse flags value
    * */
-  static parseFlagsValue(type: 'string'|'boolean'|'object'|'number'|'array', subtype: 'string'|'boolean'|'object'|'number', value: string, remaining?: any[]) {
+  static parseFlagsValue(flag: Flag, type: 'string'|'boolean'|'object'|'number'|'array', subtype: 'string'|'boolean'|'object'|'number', value: string, remaining?: any[]) {
     if(type == 'string') return value
-    else if(type == 'boolean' && ((<string>value).toLowerCase() == 'false' || value === '0')) return false
-    else if(type == 'boolean' && (typeof value == 'string')) return true
-    else if(type == 'number') return Number(value)
-    else if(type == 'object') return JSON.parse(value)
+    else if(type == 'boolean') {
+      const val = value.toLowerCase()
+
+      if(val == 'false' || val === '0') return false
+      else if(val == '' || val == 'true' || val === '1') return true
+    }
+    else if(type == 'number') {
+      const val = Number(value)
+
+      if(!isNaN(val)) return val
+    }
+    else if(type == 'object') {
+      try {
+        const val = JSON.parse(value)
+        return val
+      }
+      catch(_err) { }
+    }
     else if(type == 'array') {
       const val: any[] = []
 
       for(let i = 0; i < remaining.length; i++) {
-        val.push(this.parseFlagsValue(subtype, null, remaining[i]))
+        val.push(this.parseFlagsValue(flag, subtype, null, remaining[i]))
       }
       return val
     }
+
+    throw new InvalidFlagValueError(flag)
   }
 
   /*
@@ -185,10 +208,10 @@ export class Scheduler {
 
     for(let i = 0; i < flags.length; i++) {
       const flag = flags[i]
-      const virtual_data = virtual.find(e =>  this.isFlagAlias(e.name) ? e.name.replace(/^[-]+/, '') === flag.options.alias : e.name.replace(/^[-]+/, '') === flag.name)
+      const virtual_data = virtual.find(e =>  this.isFlagAlias(e.name) ? this.fixFlagName(e.name) === flag.options.alias : this.fixFlagName(e.name) === flag.name)
 
       if(virtual_data) {
-        flag.value = this.parseFlagsValue(flag.options.type, flag.options.subtype, virtual_data.value, virtual_data.remaining)
+        flag.value = this.parseFlagsValue(flag, flag.options.type, flag.options.subtype, virtual_data.value, virtual_data.remaining)
       }
       else {
         flag.value = flag.options.default
@@ -212,6 +235,26 @@ export class Scheduler {
    * */
   static getCommandFlags(tasks: string[], command: BaseCommand): Flag[] {
     return this.getSpecificFlags(tasks, command && command.flags ? command.flags : [])
+  }
+
+  /*
+   * Get the "transparent" flags (that are not registered)
+   * */
+  static getTransparentFlags(tasks: string[], command?: BaseCommand): Flag[] {
+    const flags: Flag[] = []
+    const virtual = this.getVirtualFlags(tasks)
+
+    for(let i = 0; i < virtual.length; i++) {
+      const current = virtual[i]
+      const name = this.fixFlagName(current.name)
+
+      // The flag is not registered in the global or command flags
+      if(!this.flags.find(e => e.name == name || e.options.alias == name) && (command && !command.flags.find(e => e.name == name || e.options.alias == name))) {
+        flags.push(new Flag(name))
+      }
+    }
+
+    return this.getSpecificFlags(tasks, flags)
   }
 
   /*
@@ -262,7 +305,12 @@ export class Scheduler {
       if(command) {
         const gflags = this.getGlobalFlags(tasks)
         const cflags = this.getCommandFlags(tasks, command)
-        const sflags = this.flagsToSimple(gflags.concat(cflags))
+        const tflags = this.getTransparentFlags(tasks, command)
+        const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
+
+        if(tflags.length && this.configure.getConfig().strict_mode_on_flags) {
+          throw new FlagNotFoundError(tflags[0].name, tflags[0].value)
+        }
 
         const method = ParameterDecorator.method(command, 'run')
 
@@ -276,8 +324,19 @@ export class Scheduler {
         }
       }
     }
-    catch(_err) {
-      console.error('se detecto un error', _err)
+    catch(err) {
+      if(err instanceof CommandNotFoundError) {
+
+      }
+      else if(err instanceof FlagNotFoundError) {
+
+      }
+      else if(err instanceof InvalidFlagValueError) {
+
+      }
+      else {
+        console.error(err.message)
+      }
     }
   }
 
