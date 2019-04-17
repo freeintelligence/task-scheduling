@@ -2,6 +2,7 @@
 Development of console applications.
 
 ## Table of Contents
+* [Beauty](#beauty)
 * [How to use](#how-to-use)
 * [Install](#install)
 * [Commands](#commands)
@@ -20,6 +21,9 @@ Development of console applications.
   * [Print help](#print-help)
 * [Mini api](#mini-api)
 * [Aliases](#aliases)
+
+## Beauty
+![Beauty](https://raw.githubusercontent.com/freeintelligence/task-scheduling/master/assets/beauty.png)
 
 ## How to use
 `main.js` / `main.ts`
@@ -222,7 +226,8 @@ example-command --help=0
 new Flag('add', { type: 'number', default: 4 })
 ```
 ```
-example-command --add // 4
+example-command // 4
+example-command --add // 0
 example-command --add=9
 example-command --add 44
 ```
