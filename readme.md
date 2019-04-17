@@ -18,7 +18,7 @@ Development of console applications.
   * [Get flag value](#get-flag-value)
 * [Help messages](#help-messages)
   * [Print help](#print-help)
-* [Mini API](#mini-api)
+* [Mini api](#mini-api)
 * [Aliases](#aliases)
 
 ## How to use
@@ -288,6 +288,22 @@ task(
     }
 })
 ```
+
+## Help messages
+The system displays help and error messages automatically in certain cases.
+* `CommandNotFoundError`
+  * When a command does not exist, a message is displayed with the list of available commands and their respective flags, in addition to the global flags.
+* `FlagNotFoundError`
+  * When trying to occupy an unregistered flag. If it is used with a command then it will show the list of available flags for that command. If used without a specific command then it will display the same message as with `CommandNotFoundError`.
+* `InvalidFlagValueError`
+  * If an erroneous value is sent in a flag, an error message will be displayed warning that X data type was expected. For example, if a string is sent in a number flag, it will display the message.
+
+### Print help
+It is possible to get the help message (in string format) with the `Scheduler.help()` method. Then it is printed with `console.log` or another.
+
+## Mini api
+I got bored writing the documentation. If I remember later, I will write this part.
+**If you want to see the options of the methods you can use the autocomplete of Typescript (and its IDEs / code editors).**
 
 ## Aliases
 Some main methods have an alias for faster, intuitive and clean code use.
