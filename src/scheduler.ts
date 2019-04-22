@@ -317,25 +317,36 @@ export class Scheduler {
     try {
       const command = this.getCommand(tasks)
 
-      if(command) {
-        const gflags = this.getGlobalFlags(tasks)
-        const cflags = this.getCommandFlags(tasks, command)
-        const tflags = this.getTransparentFlags(tasks, command)
-        const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
+      const gflags = this.getGlobalFlags(tasks)
+      const cflags = this.getCommandFlags(tasks, command)
+      const tflags = this.getTransparentFlags(tasks, command)
+      const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
 
-        if(tflags.length && this.configure.getConfig().strict_mode_on_flags) {
-          throw new FlagNotFoundError(tflags[0].name, tflags[0].value, command)
+      if(this.configure.getConfig().global_help && sflags.help.value) {
+        const helper: Helper = new Helper()
+
+        if(command) {
+          helper.header(command.name).flags(gflags.concat(cflags))
+        }
+        else {
+          helper.header().commands(this.commands).flags(gflags)
         }
 
-        const method = ParameterDecorator.method(command, 'run')
+        return helper.generate().print()
+      }
 
-        if(method) {
-          try {
-            await command[method]({ flags: sflags })
-          }
-          catch(_err) {
-            this.configure.getConfig().catch(_err)
-          }
+      if(tflags.length && this.configure.getConfig().strict_mode_on_flags) {
+        throw new FlagNotFoundError(tflags[0].name, tflags[0].value, command)
+      }
+
+      const method = ParameterDecorator.method(command, 'run')
+
+      if(method) {
+        try {
+          await command[method]({ flags: sflags })
+        }
+        catch(_err) {
+          this.configure.getConfig().catch(_err)
         }
       }
     }
