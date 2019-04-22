@@ -325,7 +325,7 @@ export class Scheduler {
       if(this.configure.getConfig().global_help && sflags.help.value) {
         const helper: Helper = new Helper()
 
-        if(command) {
+        if(command && typeof command.name == 'string' && command.name.length) {
           helper.header(command.name).flags(gflags.concat(cflags))
         }
         else {
