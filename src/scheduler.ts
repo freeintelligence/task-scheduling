@@ -21,23 +21,23 @@ export interface DataInterface {
  * */
 export class Scheduler {
 
-  public static configure: Configure = new Configure()
+  public configure: Configure = new Configure(this)
 
-  private static commands: BaseCommand[] = [] // Commands container
-  private static flags: Flag[] = [] // Flags container
-  private static default: BaseCommand
+  private commands: BaseCommand[] = [] // Commands container
+  private flags: Flag[] = [] // Flags container
+  private default: BaseCommand
 
   /*
    * Register a command
    * */
-  static registerCommand(command: BaseCommand) {
+  registerCommand(command: BaseCommand) {
     this.commands.push(command)
   }
 
   /*
    * Register a simple command
    * */
-  static registerSimpleCommand(name: string, description: string, flags: Flag[], run: Function) {
+  registerSimpleCommand(name: string, description: string, flags: Flag[], run: Function) {
     const command = class extends BaseCommand {
       name = name
       description = description
@@ -54,14 +54,14 @@ export class Scheduler {
   /*
    * Register default command (not found)
    * */
-  static registerDefault(command: BaseCommand) {
+  registerDefault(command: BaseCommand) {
     this.default = command
   }
 
   /*
    * Register simple default command (not found)
    * */
-  static registerSimpleDefault(run: Function) {
+  registerSimpleDefault(run: Function) {
     const command = class extends BaseCommand {
       async run(data) {
         await run(data)
@@ -74,14 +74,14 @@ export class Scheduler {
   /*
    * Register a flag
    * */
-  static registerFlag(flag: Flag) {
+  registerFlag(flag: Flag) {
     this.flags.push(flag)
   }
 
   /*
    * Get the data
    * */
-  static getData(tasks: string[]): DataInterface[] {
+  getData(tasks: string[]): DataInterface[] {
     let data: DataInterface[] = []
 
     for(let i = 0; i < tasks.length; i++) {
@@ -127,7 +127,7 @@ export class Scheduler {
   /*
    * Get the virtual command
    * */
-  static getVirtualCommand(tasks: string[]): string {
+  getVirtualCommand(tasks: string[]): string {
     let tasks_data = this.getData(tasks)
     let command_name = tasks_data.find(e => e.type == 'command')
 
@@ -137,14 +137,14 @@ export class Scheduler {
   /*
    * Get the commands (all)
    * */
-  static getGlobalCommands(): BaseCommand[] {
+  getGlobalCommands(): BaseCommand[] {
     return this.commands
   }
 
   /*
    * Get the command
    * */
-  static getCommand(tasks: string[]): BaseCommand {
+  getCommand(tasks: string[]): BaseCommand {
     let virtual = this.getVirtualCommand(tasks)
     let command: BaseCommand
 
@@ -161,14 +161,14 @@ export class Scheduler {
   /*
    * Fix flag name (remove -)
    * */
-  static fixFlagName(name: string): string {
+  fixFlagName(name: string): string {
     return name.replace(/^[-]+/, '')
   }
 
   /*
    * Parse flags value
    * */
-  static parseFlagsValue(flag: Flag, type: 'string'|'boolean'|'object'|'number'|'array', subtype: 'string'|'boolean'|'object'|'number', value: string, remaining?: any[]) {
+  parseFlagsValue(flag: Flag, type: 'string'|'boolean'|'object'|'number'|'array', subtype: 'string'|'boolean'|'object'|'number', value: string, remaining?: any[]) {
     if(type == 'string') return value
     else if(type == 'boolean') {
       const val = value.toLowerCase()
@@ -203,14 +203,14 @@ export class Scheduler {
   /*
    * Get the flags and their values by string
    * */
-  static getVirtualFlags(tasks: string[]) {
+  getVirtualFlags(tasks: string[]) {
     return this.getData(tasks).filter(e => e.type == 'flag')
   }
 
   /*
    * Get flags by container
    * */
-  static getSpecificFlags(tasks: string[], flags: Flag[]) {
+  getSpecificFlags(tasks: string[], flags: Flag[]) {
     const container: Flag[] = []
     const virtual = this.getVirtualFlags(tasks)
 
@@ -234,21 +234,21 @@ export class Scheduler {
   /*
    * Get the global flags
    * */
-  static getGlobalFlags(tasks: string[] = []): Flag[] {
+  getGlobalFlags(tasks: string[] = []): Flag[] {
     return this.getSpecificFlags(tasks, this.flags)
   }
 
   /*
    * Get the flags of a command
    * */
-  static getCommandFlags(tasks: string[], command: BaseCommand): Flag[] {
+  getCommandFlags(tasks: string[], command: BaseCommand): Flag[] {
     return this.getSpecificFlags(tasks, command && command.flags ? command.flags : [])
   }
 
   /*
    * Get the "transparent" flags (that are not registered)
    * */
-  static getTransparentFlags(tasks: string[], command?: BaseCommand): Flag[] {
+  getTransparentFlags(tasks: string[], command?: BaseCommand): Flag[] {
     const flags: Flag[] = []
     const virtual = this.getVirtualFlags(tasks)
 
@@ -268,7 +268,7 @@ export class Scheduler {
   /*
    * Flags to simple object
    * */
-  static flagsToSimple(flags: Flag[]): Flags {
+  flagsToSimple(flags: Flag[]): Flags {
     const simple: Flags = { }
 
     for(let i = 0; i < flags.length; i++) {
@@ -281,7 +281,7 @@ export class Scheduler {
   /*
    * Is flag (complete name or alias)
    * */
-  static isFlag(task: string): boolean {
+  isFlag(task: string): boolean {
     if(task == '--' || task == '-') return false
 
     return /^(\-{1,2})(.+)$/g.test(task)
@@ -290,14 +290,14 @@ export class Scheduler {
   /*
    * Is flag alias (only alias)
    **/
-  static isFlagAlias(task: string): boolean {
+  isFlagAlias(task: string): boolean {
     return /^\-([^\-])+$/g.test(task)
   }
 
   /*
    * Is flag (complete name or alias) with value (in the same line)
    * */
-  static isFlagWithValue(task: string): boolean {
+  isFlagWithValue(task: string): boolean {
     if(!this.isFlag(task)) return false
 
     return task.indexOf('=') !== -1
@@ -306,14 +306,14 @@ export class Scheduler {
   /*
    * Get help message
    * */
-  static help(): string {
+  help(): string {
     return new Helper().header().commands(this.getGlobalCommands()).flags(this.getGlobalFlags()).generate().getMessage()
   }
 
   /*
    * Execute a command
    * */
-  static async execute(tasks: string[]) {
+  async execute(tasks: string[]) {
     try {
       const command = this.getCommand(tasks)
 
@@ -374,7 +374,7 @@ export class Scheduler {
   /*
    * Execute a command by process argv
    * */
-  static async executeByProcess() {
+  async executeByProcess() {
     const command = process.argv.length > 2 ? process.argv.slice(2) : []
     return await this.execute(command)
   }

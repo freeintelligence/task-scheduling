@@ -17,7 +17,12 @@ export interface ConfigInterface {
  * */
 export class Configure {
 
-  private config: ConfigInterface = {}
+  private config: ConfigInterface = { } // Config data
+  private scheduler: Scheduler // Scheduler instance
+
+  constructor(scheduler: Scheduler) {
+    this.scheduler = scheduler
+  }
 
   /*
    * Set configuration
@@ -37,7 +42,7 @@ export class Configure {
     }
 
     if(this.config.global_help) {
-      Scheduler.registerFlag(new Flag('help', { alias: 'h', description: 'Show help', default: false, type: 'boolean' }))
+      this.scheduler.registerFlag(new Flag('help', { alias: 'h', description: 'Show help', default: false, type: 'boolean' }))
     }
   }
 
