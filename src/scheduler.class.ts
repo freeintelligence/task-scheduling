@@ -433,7 +433,8 @@ export class Scheduler {
         throw err
       }
 
-      err.stack = helper.generate().getMessage()
+      err.stack = helper.generate().getMessage();
+      (err as any).is_help = true
 
       throw err
     }

@@ -1,6 +1,6 @@
 {
   "name": "task-scheduling",
-  "version": "1.0.0-rc.9",
+  "version": "1.0.0-rc.10",
   "description": "Argument management for console applications..",
   "author": {
     "name": "FreeIntelligence",
@@ -16,7 +16,7 @@
   "homepage": "https://github.com/freeintelligence/task-scheduling#readme",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rm -rf dist && tsc && cp readme.md package.json dist"
   },
   "keywords": [
     "node",
