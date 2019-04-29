@@ -155,7 +155,10 @@ export class Scheduler {
       throw new CommandNotFoundError(virtual)
     }
 
-    return commands.length ? commands : [this.default]
+    if(commands.length) return commands;
+    if(this.default) return [this.default];
+
+    return []
   }
 
   /*
