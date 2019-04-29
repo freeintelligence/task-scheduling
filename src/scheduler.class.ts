@@ -429,6 +429,9 @@ export class Scheduler {
       else if(err instanceof ExtraNotFoundError) {
         helper.error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks))
       }
+      else {
+        throw err
+      }
 
       err.stack = helper.generate().getMessage()
 
