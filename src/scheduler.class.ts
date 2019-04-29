@@ -344,6 +344,8 @@ export class Scheduler {
    * Get only the name of the command
    * */
   private getOnlyName(name: string): string {
+    if(typeof name == 'undefined') return undefined;
+
     return name.split(' ')[0]
   }
 
