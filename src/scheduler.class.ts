@@ -44,7 +44,7 @@ export class Scheduler {
       flags = flags
 
       async run(data) {
-        await run(data)
+        return await run(data)
       }
     }
 
@@ -74,7 +74,7 @@ export class Scheduler {
   registerSimpleDefault(run: Function) {
     const command = class extends BaseCommand {
       async run(data) {
-        await run(data)
+        return await run(data)
       }
     }
 
@@ -298,15 +298,15 @@ export class Scheduler {
     if(!(typeof command.name == 'string' && command.name.length)) return { };
 
     const simple = { }
-    const virtuals = _virtuals.shift()
-    const extras = command.name.split(' ').shift()
+    const virtuals = _virtuals.slice(1)
+    const extras = command.name.split(' ').slice(1)
 
     for(let i = 0; i < extras.length; i++) {
       const extra_name = extras[i].replace(/[^\w\s\-]/gi, '')
       const is_required = extras[i].indexOf('?') === -1
 
       if(is_required && typeof virtuals[i] == 'undefined') {
-        throw new ExtraNotFoundError(this.getOnlyName(command.name), extras[i], command)
+        throw new ExtraNotFoundError(this.getOnlyName(command.name), extras[i])
       }
 
       simple[extra_name] = virtuals[i]
@@ -410,27 +410,24 @@ export class Scheduler {
       return results
     }
     catch(err) {
-      if(err instanceof CommandNotFoundError) {
-        const helper = new Helper()
+      const helper = new Helper()
 
+      if(err instanceof CommandNotFoundError) {
         if(!(typeof err.name == 'undefined' || err.name == null)) helper.error(err.message)
 
-        helper.header().commands(this.commands).flags(this.getGlobalFlags(tasks)).generate().print()
+        helper.header().commands(this.commands).flags(this.getGlobalFlags(tasks))
       }
       else if(err instanceof FlagNotFoundError) {
-        if(err.command && err.command.name) {
-          new Helper().error(err.message).header(err.command.name).flags(this.getGlobalFlags(tasks).concat(err.command.flags)).generate().print()
-        }
-        else {
-          new Helper().error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks)).generate().print()
-        }
+        if(err.command && err.command.name) helper.error(err.message).header(err.command.name).flags(this.getGlobalFlags(tasks).concat(err.command.flags))
+        else helper.error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks))
       }
       else if(err instanceof InvalidFlagValueError) {
-        new Helper().error(err.message).generate().print()
+        helper.error(err.message)
       }
-      else {
-        console.error(err.stack)
-      }
+
+      err.stack = helper.generate().getMessage()
+
+      throw err
     }
   }
 
