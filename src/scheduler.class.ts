@@ -322,7 +322,9 @@ export class Scheduler {
 
       const gflags = this.getGlobalFlags(tasks)
 
-      commands.forEach(async (command) => {
+      for(let i = 0; i < commands.length; i++) {
+        const command = commands[i]
+
         const cflags = this.getCommandFlags(tasks, command)
         const tflags = this.getTransparentFlags(tasks, command)
         const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
@@ -360,7 +362,7 @@ export class Scheduler {
             this.configure.getConfig().catch(_err)
           }
         }
-      })
+      }
 
       return commands.length
     }
