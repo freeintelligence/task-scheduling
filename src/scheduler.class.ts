@@ -1,7 +1,7 @@
 import { ParameterDecorator } from 'ts-ext-decorators'
 import { BaseCommand } from './command'
 import { Flag } from './flag'
-import { Flags } from './types'
+import { Flags } from './interfaces'
 import { Configure } from './configure'
 import { Helper } from './helper'
 import { CommandNotFoundError, FlagNotFoundError, InvalidFlagValueError } from './errors'
@@ -142,20 +142,20 @@ export class Scheduler {
   }
 
   /*
-   * Get the command
+   * Get the commands
    * */
-  getCommand(tasks: string[]): BaseCommand {
+  getCommands(tasks: string[]): BaseCommand[] {
     let virtual = this.getVirtualCommand(tasks)
-    let command: BaseCommand
+    let commands: BaseCommand[] = []
 
-    if(!virtual) command = this.commands.find(e => (e as any).name == '' || typeof (e as any).name == 'undefined')
-    else command = this.commands.find(e => (e as any).name == virtual)
+    if(!virtual) commands = this.commands.filter(e => (e as any).name == '' || typeof (e as any).name == 'undefined')
+    else commands = this.commands.filter(e => (e as any).name == virtual)
 
-    if(!command && !this.default && this.configure.getConfig().strict_mode_on_commands) {
+    if(!commands.length && !this.default && this.configure.getConfig().strict_mode_on_commands) {
       throw new CommandNotFoundError(virtual)
     }
 
-    return command ? command : this.default
+    return commands.length ? commands : [this.default]
   }
 
   /*
@@ -315,44 +315,51 @@ export class Scheduler {
    * */
   async execute(tasks: string[]) {
     try {
-      const command = this.getCommand(tasks)
+      const commands = this.getCommands(tasks)
 
       const gflags = this.getGlobalFlags(tasks)
-      const cflags = this.getCommandFlags(tasks, command)
-      const tflags = this.getTransparentFlags(tasks, command)
-      const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
 
-      if(this.configure.getConfig().global_help && sflags.help.value) {
-        const helper: Helper = new Helper()
+      commands.forEach(async (command) => {
+        const cflags = this.getCommandFlags(tasks, command)
+        const tflags = this.getTransparentFlags(tasks, command)
+        const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
 
-        if(command && typeof command.name == 'string' && command.name.length) {
-          helper.header(command.name).flags(gflags.concat(cflags))
+        if(this.configure.getConfig().global_help && sflags.help.value) {
+          const helper: Helper = new Helper()
+
+          if(command && typeof command.name == 'string' && command.name.length) {
+            helper.header(command.name).flags(gflags.concat(cflags))
+          }
+          else {
+            helper.header().commands(this.commands).flags(gflags)
+          }
+
+          helper.generate().print()
+
+          if(this.configure.getConfig().exit_on_help) {
+            process.exit()
+          }
         }
-        else {
-          helper.header().commands(this.commands).flags(gflags)
+
+        if(tflags.length && this.configure.getConfig().strict_mode_on_flags) {
+          throw new FlagNotFoundError(tflags[0].name, tflags[0].value, command)
         }
 
-        helper.generate().print()
+        const method = ParameterDecorator.method(command, 'run')
 
-        if(this.configure.getConfig().exit_on_help) {
-          process.exit()
+        if(method) {
+          try {
+            await command[method]({ flags: sflags })
+
+            return 1
+          }
+          catch(_err) {
+            this.configure.getConfig().catch(_err)
+          }
         }
-      }
+      })
 
-      if(tflags.length && this.configure.getConfig().strict_mode_on_flags) {
-        throw new FlagNotFoundError(tflags[0].name, tflags[0].value, command)
-      }
-
-      const method = ParameterDecorator.method(command, 'run')
-
-      if(method) {
-        try {
-          await command[method]({ flags: sflags })
-        }
-        catch(_err) {
-          this.configure.getConfig().catch(_err)
-        }
-      }
+      return commands.length
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {

@@ -1,4 +1,4 @@
-import { Scheduler } from './scheduler'
+import { Scheduler } from './scheduler.class'
 import { Flag } from './flag'
 
 /*

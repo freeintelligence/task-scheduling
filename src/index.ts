@@ -1,5 +1,5 @@
 export * from './command'
 export * from './flag'
-export * from './scheduler'
+export * from './scheduler.class'
 export * from './decorators'
 export * from './helper'
