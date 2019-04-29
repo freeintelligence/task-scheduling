@@ -424,6 +424,9 @@ export class Scheduler {
       else if(err instanceof InvalidFlagValueError) {
         helper.error(err.message)
       }
+      else if(err instanceof ExtraNotFoundError) {
+        helper.error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks))
+      }
 
       err.stack = helper.generate().getMessage()
 
