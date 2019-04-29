@@ -4,7 +4,7 @@ import { Flag } from './flag'
 import { Flags } from './interfaces'
 import { Configure } from './configure'
 import { Helper } from './helper'
-import { CommandNotFoundError, FlagNotFoundError, InvalidFlagValueError } from './errors'
+import { CommandNotFoundError, FlagNotFoundError, InvalidFlagValueError, ExtraNotFoundError } from './errors'
 
 /*
  *
@@ -55,6 +55,9 @@ export class Scheduler {
    * Push command
    * */
   private pushCommand(command: BaseCommand) {
+    if(typeof command.name == 'string') command.name = command.name.trim();
+    if(typeof command.description == 'string') command.description = command.description.trim();
+
     this.commands.push(command)
   }
 
@@ -278,7 +281,7 @@ export class Scheduler {
   /*
    * Flags to simple object
    * */
-  flagsToSimple(flags: Flag[]): Flags {
+  private flagsToSimple(flags: Flag[]): Flags {
     const simple: Flags = { }
 
     for(let i = 0; i < flags.length; i++) {
@@ -291,10 +294,23 @@ export class Scheduler {
   /*
    * Virtuals to simple object
    * */
-  virtualsToSimple(command: BaseCommand, virtuals: string[]): { [command: string]: string } {
-    const simple = { }
+  private virtualsToSimple(command: BaseCommand, _virtuals: string[]): { [command: string]: string } {
+    if(!(typeof command.name == 'string' && command.name.length)) return { };
 
-    command.name
+    const simple = { }
+    const virtuals = _virtuals.shift()
+    const extras = command.name.split(' ').shift()
+
+    for(let i = 0; i < extras.length; i++) {
+      const extra_name = extras[i].replace(/[^\w\s\-]/gi, '')
+      const is_required = extras[i].indexOf('?') === -1
+
+      if(is_required && typeof virtuals[i] == 'undefined') {
+        throw new ExtraNotFoundError(this.getOnlyName(command.name), extras[i], command)
+      }
+
+      simple[extra_name] = virtuals[i]
+    }
 
     return simple
   }
@@ -302,7 +318,7 @@ export class Scheduler {
   /*
    * Is flag (complete name or alias)
    * */
-  isFlag(task: string): boolean {
+  private isFlag(task: string): boolean {
     if(task == '--' || task == '-') return false
 
     return /^(\-{1,2})(.+)$/g.test(task)
@@ -311,14 +327,14 @@ export class Scheduler {
   /*
    * Is flag alias (only alias)
    **/
-  isFlagAlias(task: string): boolean {
+  private isFlagAlias(task: string): boolean {
     return /^\-([^\-])+$/g.test(task)
   }
 
   /*
    * Is flag (complete name or alias) with value (in the same line)
    * */
-  isFlagWithValue(task: string): boolean {
+  private isFlagWithValue(task: string): boolean {
     if(!this.isFlag(task)) return false
 
     return task.indexOf('=') !== -1
