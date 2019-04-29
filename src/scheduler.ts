@@ -332,7 +332,11 @@ export class Scheduler {
           helper.header().commands(this.commands).flags(gflags)
         }
 
-        return helper.generate().print()
+        helper.generate().print()
+
+        if(this.configure.getConfig().exit_on_help) {
+          process.exit()
+        }
       }
 
       if(tflags.length && this.configure.getConfig().strict_mode_on_flags) {
