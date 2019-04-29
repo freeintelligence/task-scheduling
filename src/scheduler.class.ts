@@ -359,6 +359,7 @@ export class Scheduler {
    * */
   async execute(tasks: string[]) {
     try {
+      const results: any[] = []
       const commands = this.getCommands(tasks)
       const virtuals = this.getVirtualCommands(tasks)
 
@@ -397,7 +398,8 @@ export class Scheduler {
 
         if(method) {
           try {
-            await command[method]({ flags: sflags, extra: svirtuals })
+            const result = await command[method]({ flags: sflags, extra: svirtuals })
+            results.push(result)
           }
           catch(_err) {
             this.configure.getConfig().catch(_err)
@@ -405,7 +407,7 @@ export class Scheduler {
         }
       }
 
-      return commands.length
+      return results
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {
