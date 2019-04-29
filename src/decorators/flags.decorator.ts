@@ -1,6 +1,6 @@
 import { ParameterDecorator } from 'ts-ext-decorators'
-import { Flags as IFlags } from './interfaces'
-import { Flag } from './flag'
+import { Flags as IFlags } from './../interfaces'
+import { Flag } from './../flag'
 
 /*
  *

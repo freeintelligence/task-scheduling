@@ -31,7 +31,7 @@ export class Scheduler {
    * Register a command
    * */
   registerCommand(command: BaseCommand) {
-    this.commands.push(command)
+    return this.pushCommand(command)
   }
 
   /*
@@ -48,7 +48,14 @@ export class Scheduler {
       }
     }
 
-    this.commands.push(new command())
+    return this.pushCommand(new command())
+  }
+
+  /*
+   * Push command
+   * */
+  private pushCommand(command: BaseCommand) {
+    this.commands.push(command)
   }
 
   /*
@@ -125,13 +132,13 @@ export class Scheduler {
   }
 
   /*
-   * Get the virtual command
+   * Get the virtual commands
    * */
-  getVirtualCommand(tasks: string[]): string {
+  getVirtualCommands(tasks: string[]): string[] {
     let tasks_data = this.getData(tasks)
-    let command_name = tasks_data.find(e => e.type == 'command')
+    let command_name = tasks_data.filter(e => e.type == 'command')
 
-    return command_name && command_name.name ? command_name.name : null
+    return command_name.map(e => e.name)
   }
 
   /*
@@ -145,14 +152,14 @@ export class Scheduler {
    * Get the commands
    * */
   getCommands(tasks: string[]): BaseCommand[] {
-    let virtual = this.getVirtualCommand(tasks)
+    let virtuals = this.getVirtualCommands(tasks)
     let commands: BaseCommand[] = []
 
-    if(!virtual) commands = this.commands.filter(e => (e as any).name == '' || typeof (e as any).name == 'undefined')
-    else commands = this.commands.filter(e => (e as any).name == virtual)
+    if(!virtuals.length) commands = this.commands.filter(e => e.name == '' || typeof e.name == 'undefined')
+    else commands = this.commands.filter(e => this.getOnlyName(e.name) == virtuals[0])
 
     if(!commands.length && !this.default && this.configure.getConfig().strict_mode_on_commands) {
-      throw new CommandNotFoundError(virtual)
+      throw new CommandNotFoundError(virtuals[0])
     }
 
     if(commands.length) return commands;
@@ -282,6 +289,17 @@ export class Scheduler {
   }
 
   /*
+   * Virtuals to simple object
+   * */
+  virtualsToSimple(command: BaseCommand, virtuals: string[]): { [command: string]: string } {
+    const simple = { }
+
+    command.name
+
+    return simple
+  }
+
+  /*
    * Is flag (complete name or alias)
    * */
   isFlag(task: string): boolean {
@@ -307,6 +325,13 @@ export class Scheduler {
   }
 
   /*
+   * Get only the name of the command
+   * */
+  private getOnlyName(name: string): string {
+    return name.split(' ')[0]
+  }
+
+  /*
    * Get help message
    * */
   help(): string {
@@ -319,6 +344,7 @@ export class Scheduler {
   async execute(tasks: string[]) {
     try {
       const commands = this.getCommands(tasks)
+      const virtuals = this.getVirtualCommands(tasks)
 
       const gflags = this.getGlobalFlags(tasks)
 
@@ -328,6 +354,7 @@ export class Scheduler {
         const cflags = this.getCommandFlags(tasks, command)
         const tflags = this.getTransparentFlags(tasks, command)
         const sflags = this.flagsToSimple(gflags.concat(cflags, tflags))
+        const svirtuals = this.virtualsToSimple(command, virtuals)
 
         if(this.configure.getConfig().global_help && sflags.help.value) {
           const helper: Helper = new Helper()
@@ -354,9 +381,7 @@ export class Scheduler {
 
         if(method) {
           try {
-            await command[method]({ flags: sflags })
-
-            return 1
+            await command[method]({ flags: sflags, extra: svirtuals })
           }
           catch(_err) {
             this.configure.getConfig().catch(_err)
@@ -368,7 +393,11 @@ export class Scheduler {
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {
-        new Helper().error(err.message).header().commands(this.commands).flags(this.getGlobalFlags(tasks)).generate().print()
+        const helper = new Helper()
+
+        if(!(typeof err.name == 'undefined' || err.name == null)) helper.error(err.message)
+
+        helper.header().commands(this.commands).flags(this.getGlobalFlags(tasks)).generate().print()
       }
       else if(err instanceof FlagNotFoundError) {
         if(err.command && err.command.name) {
