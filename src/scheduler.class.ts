@@ -451,6 +451,13 @@ export class Scheduler {
    * Get process argv
    * */
   processArgv() {
+    return Scheduler.processArgv()
+  }
+
+  /*
+   * Get process argv
+   * */
+  static processArgv() {
     return process.argv.length > 2 ? process.argv.slice(2) : []
   }
 
