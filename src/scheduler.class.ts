@@ -444,8 +444,14 @@ export class Scheduler {
    * Execute a command by process argv
    * */
   async executeByProcess() {
-    const command = process.argv.length > 2 ? process.argv.slice(2) : []
-    return await this.execute(command)
+    return await this.execute(this.processArgv())
+  }
+
+  /*
+   * Get process argv
+   * */
+  processArgv() {
+    return process.argv.length > 2 ? process.argv.slice(2) : []
   }
 
 }
