@@ -1,6 +1,6 @@
 import { magenta, red, cyan, italic, gray } from 'colors/safe'
-import { Flag } from './flag'
-import { BaseCommand } from './command'
+import { Flag } from './../flag'
+import { BaseCommand } from './../interfaces'
 
 /*
  * Helper messages in the console

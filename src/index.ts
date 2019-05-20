@@ -1,5 +1,7 @@
-export * from './command'
+export * from './interfaces'
 export * from './flag'
-export * from './scheduler.class'
-export * from './decorators'
 export * from './helper'
+export * from './configure'
+export * from './errors'
+
+export * from './scheduler.class'
