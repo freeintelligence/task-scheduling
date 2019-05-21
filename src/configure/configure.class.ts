@@ -20,17 +20,17 @@ export class Configure implements Settings {
   /*
    * Settings
    * */
-  strict_mode?: boolean
-  strict_mode_on_commands?: boolean
-  strict_mode_on_flags?: boolean
-  global_help?: boolean
-  exit_on_help?: boolean
-  catch?: (err: Error) => any
+  public strict_mode?: boolean
+  public strict_mode_on_commands?: boolean
+  public strict_mode_on_flags?: boolean
+  public global_help?: boolean
+  public exit_on_help?: boolean
+  public catch?: (err: Error) => any
 
   /*
    * Scheduler instance
    * */
-  scheduler: Scheduler
+  private scheduler: Scheduler
 
   /*
    * Constructor

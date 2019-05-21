@@ -21,6 +21,7 @@ export class Scheduler {
    * */
   constructor(settings?: Settings) {
     this.config = new Configure(this)
+    this.commands = new Commands()
 
     if(settings) {
       for(let i in settings) {
@@ -33,7 +34,28 @@ export class Scheduler {
    * Execute scheduler
    * */
   async execute(tasks: string[]) {
-    const commands = await this.commands.getByTasks(tasks)
+    //const commands = await this.commands.getByTasks(tasks)
+  }
+
+  /*
+   * Execute scheduler by process argv
+   * */
+  async executeByProcess() {
+    return await this.execute(this.processArgv())
+  }
+
+  /*
+   * Get process argv
+   * */
+  processArgv() {
+    return Scheduler.processArgv()
+  }
+
+  /*
+   * Get process argv
+   * */
+  static processArgv() {
+    return process.argv.length > 2 ? process.argv.slice(2) : []
   }
 
 }

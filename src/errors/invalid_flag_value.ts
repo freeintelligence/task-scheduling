@@ -1,4 +1,4 @@
-import { Flag } from './../flag'
+import { Flag } from './../flags'
 
 /*
  * Invalid flag value type error

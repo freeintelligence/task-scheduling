@@ -1,5 +1,5 @@
 export * from './interfaces'
-export * from './flag'
+export * from './flags'
 export * from './helper'
 export * from './configure'
 export * from './errors'
