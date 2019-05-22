@@ -1,4 +1,5 @@
 import { Configure, Settings } from './configure'
+import { Inspector } from './inspector'
 import { Commands } from './commands'
 import { Flags } from './flags'
 import { Middletasks } from './middletasks'
@@ -12,6 +13,7 @@ export class Scheduler {
    * Instance data
    */
   public tasks: string[]
+  public inspector: Inspector
   public config: Configure
   public commands: Commands
   public flags: Flags
@@ -30,6 +32,7 @@ export class Scheduler {
     if(typeof settings == 'object' && settings !== null) _settings = settings;
 
     this.config = new Configure(this)
+    this.inspector = new Inspector(_tasks)
     this.commands = new Commands(this)
 
     this.tasks = _tasks ? _tasks : this.processArgv()
