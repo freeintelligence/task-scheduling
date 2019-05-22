@@ -3,14 +3,15 @@ import { Commands } from './commands'
 import { Flags } from './flags'
 import { Middletasks } from './middletasks'
 
-/*
+/**
  * Scheduler
- * */
+ */
 export class Scheduler {
 
-  /*
+  /**
    * Instance data
-   * */
+   */
+  public tasks: string[]
   public config: Configure
   public commands: Commands
   public flags: Flags
@@ -19,13 +20,23 @@ export class Scheduler {
   /*
    * Constructor
    * */
-  constructor(settings?: Settings) {
-    this.config = new Configure(this)
-    this.commands = new Commands()
+  constructor(settings?: Settings);
+  constructor(tasks?: string[] | Settings, settings?: Settings) {
+    let _tasks: string[]
+    let _settings: Settings
 
-    if(settings) {
-      for(let i in settings) {
-        this.config[i] = settings[i]
+    if(tasks instanceof Array) _tasks = tasks;
+    else if(typeof tasks == 'object' && tasks !== null) _settings = tasks;
+    if(typeof settings == 'object' && settings !== null) _settings = settings;
+
+    this.config = new Configure(this)
+    this.commands = new Commands(this)
+
+    this.tasks = _tasks ? _tasks : this.processArgv()
+
+    if(_settings) {
+      for(let i in _settings) {
+        this.config[i] = _settings[i]
       }
     }
   }
@@ -33,8 +44,12 @@ export class Scheduler {
   /*
    * Execute scheduler
    * */
-  async execute(tasks: string[]) {
-    //const commands = await this.commands.getByTasks(tasks)
+  async execute(tasks?: string[]) {
+    if(!tasks) tasks = this.tasks;
+
+    const commands = await this.commands.getByTasks(tasks)
+
+    console.log(JSON.stringify(commands, null, 2))
   }
 
   /*
