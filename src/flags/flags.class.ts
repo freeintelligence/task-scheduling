@@ -27,6 +27,17 @@ export class Flags {
   }
 
   /**
+   * Remove flags by name
+   */
+  public remove(name: string|string[]) {
+    if(typeof name == 'string') name = [ name ];
+
+    for(let i in name) {
+      this.container_flags = this.container_flags.filter(e => e.name.indexOf(name[i]) === -1)
+    }
+  }
+
+  /**
    * Register flag
    */
   public push(instance: Flag) {
