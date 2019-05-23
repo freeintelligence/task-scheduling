@@ -55,7 +55,7 @@ export class Scheduler {
   /**
    * Execute scheduler by process argv
    */
-  async public executeByProcess() {
+  public async executeByProcess() {
     return await this.execute(this.processArgv())
   }
 
