@@ -47,9 +47,14 @@ export class Scheduler {
    * Execute scheduler
    */
   public async execute(tasks?: string[]) {
-    const commands = await this.commands.getByName(this.inspector.thisOr(tasks).getCommand().name)
+    const name = this.inspector.thisOr(tasks).getCommand().name
+    const commands = await this.commands.getByName(name)
 
-    console.log('commands', commands)
+    for(let i in commands) {
+      const command = commands[i]
+
+      await command.run({ flags: { } })
+    }
   }
 
   /**

@@ -46,11 +46,6 @@ export class Commands {
 
   /**
    * Register a command in a simple way (inline)
-   * @param name name for the command
-   * @param description a description that will appear in the general help
-   * @param flags array of flags that the command will occupy
-   * @param run function to be executed when the command corresponds to the one in need
-   * @return this
    */
   public pushSimple(name: string, run?: Function): this;
   public pushSimple(run: Function): this;
