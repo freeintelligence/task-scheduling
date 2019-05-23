@@ -24,15 +24,15 @@ export class Extra {
   /**
    * Required
    */
-  public required(): boolean {
+  public isRequired(): boolean {
     return typeof this.options.default == 'undefined'
   }
 
   /**
-   * Beauty name
+   * Beauty name (for print)
    */
   public beautyName(): string {
-    return `<${this.name}${!this.required() ? '?' : ''}>`
+    return `<${this.name}${!this.isRequired() ? '?' : ''}>`
   }
 
 }
