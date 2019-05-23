@@ -7,32 +7,13 @@ export class Inspector {
    * Data
    */
   private tasks: string[]
-  public resources: { type: 'command'|'extra'|'flag'|'flag-alias', name: string, value?: string }[]
+  public resources: { type: 'command'|'extra'|'flag'|'flag-alias', name: string, value?: string }[] = []
 
   /**
    * Constructor
    */
   constructor(tasks: string[]) {
-    this.tasks = tasks ? tasks : []
-
-    for(let i = 0; i < tasks.length; i++) {
-      const task = tasks[i].trim()
-
-      if(Inspector.isFlag(task)) {
-        const type = Inspector.isFlagAlias(task) ? 'flag-alias' : 'flag'
-        const name = Inspector.getOnlyFlagName(task)
-        const value = Inspector.getOnlyFlagValue(Inspector.isFlagWithValue(task) ? task : tasks.slice(i+1))
-
-        this.resources.push({ type: type, name: name, value: value })
-
-        if(!Inspector.isFlag(task)) {
-          i++
-        }
-      }
-      else if(Inspector.isCommand(task)) {
-        this.resources.push({ type: !this.resources.find(e => e.type == 'command') ? 'command' : 'extra', name: task })
-      }
-    }
+    this.byTasks(tasks)
   }
 
   /**
@@ -70,10 +51,6 @@ export class Inspector {
   }
 
   /**
-   * Is flag next (task) value
-   */
-
-  /**
    * Get only flag value
    */
   public static getOnlyFlagValue(tasks: string | string[]): string {
@@ -87,12 +64,12 @@ export class Inspector {
     else {
       const next = tasks.shift()
 
-      if(!this.isFlag(next)) {
+      if(next && !this.isFlag(next)) {
         return next
       }
     }
 
-    ''
+    return ''
   }
 
   /**
@@ -100,6 +77,34 @@ export class Inspector {
    */
   public static isCommand(task: string): boolean {
     return !this.isFlag(task)
+  }
+
+  /**
+   * Inspect tasks array
+   */
+  public byTasks(tasks: string[]) {
+    this.tasks = tasks ? tasks : []
+    this.resources = []
+
+    for(let i = 0; i < this.tasks.length; i++) {
+      const task = tasks[i].trim()
+      const next = tasks[i+1]
+
+      if(Inspector.isFlag(task)) {
+        const type = Inspector.isFlagAlias(task) ? 'flag-alias' : 'flag'
+        const name = Inspector.getOnlyFlagName(task)
+        const value = Inspector.getOnlyFlagValue(Inspector.isFlagWithValue(task) ? task : tasks.slice(i+1))
+
+        this.resources.push({ type: type, name: name, value: value })
+
+        if(!Inspector.isFlag(next)) {
+          i++
+        }
+      }
+      else if(Inspector.isCommand(task)) {
+        this.resources.push({ type: !this.resources.find(e => e.type == 'command') ? 'command' : 'extra', name: task })
+      }
+    }
   }
 
   /**

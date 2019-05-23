@@ -6,11 +6,11 @@ describe('Scheduler instance', () => {
   const scheduler = new Scheduler()
 
   beforeEach(() => {
-    scheduler.commands.reset()
+    //scheduler.commands.reset()
   })
 
-  test('prueba de test', () => {
-
+  test('temp', () => {
+    expect(true).toBeTruthy()
   })
 
 })
