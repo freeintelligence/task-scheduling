@@ -59,7 +59,7 @@ export class Flags {
    * Get flag by name
    */
   public getByName(name: string) {
-    return this.container_flags.find(e => e.name == name)
+    return this.container_flags.filter(e => e.name.indexOf(name) !== -1)
   }
 
 }
