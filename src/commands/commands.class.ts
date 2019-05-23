@@ -158,8 +158,17 @@ export class Commands {
   /**
    * Get commands by tasks
    */
-  public getByTasks(tasks?: string[]) {
-    return this.container_commands
+  public getByName(name: string) {
+    let result: BaseCommand[]
+
+    if(typeof name == 'undefined' || name == '') {
+      result = this.container_commands.filter(e => !e.name.length)
+    }
+    else {
+      result = this.container_commands.filter(e => e.name == name)
+    }
+
+    return result.length ? result : this.container_default
   }
 
 }

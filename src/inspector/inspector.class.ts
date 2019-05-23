@@ -7,7 +7,7 @@ export class Inspector {
    * Data
    */
   private tasks: string[]
-  public resources: { type: 'command'|'extra'|'flag'|'flag-alias', name: string, value?: string }[] = []
+  public resources: { type?: 'command'|'extra'|'flag'|'flag-alias', name?: string, value?: string }[] = []
 
   /**
    * Constructor
@@ -105,6 +105,27 @@ export class Inspector {
         this.resources.push({ type: !this.resources.find(e => e.type == 'command') ? 'command' : 'extra', name: task })
       }
     }
+  }
+
+  /**
+   * Get command
+   */
+  public getCommand() {
+    return this.resources.find(e => e.type == 'command') || { }
+  }
+
+  /**
+   * Get extras
+   */
+  public getExtras() {
+    return this.resources.filter(e => e.type == 'extra')
+  }
+
+  /**
+   * Get flags
+   */
+  public getFlags(include_alias: boolean = true) {
+    return this.resources.filter(e => e.type == 'flag' || e.type == 'flag-alias')
   }
 
   /**

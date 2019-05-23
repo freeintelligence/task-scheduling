@@ -46,30 +46,30 @@ export class Scheduler {
   /**
    * Execute scheduler
    */
-  async execute(tasks?: string[]) {
-    const commands = await this.commands.getByTasks(tasks)
+  public async execute(tasks?: string[]) {
+    const commands = await this.commands.getByName(this.inspector.thisOr(tasks).getCommand().name)
 
-    console.log(JSON.stringify(commands, null, 2))
+    console.log('commands', commands)
   }
 
   /**
    * Execute scheduler by process argv
    */
-  async executeByProcess() {
+  async public executeByProcess() {
     return await this.execute(this.processArgv())
   }
 
   /**
    * Get process argv
    */
-  processArgv() {
+  private processArgv() {
     return Scheduler.processArgv()
   }
 
   /**
    * Get process argv
    */
-  static processArgv() {
+  public static processArgv() {
     return process.argv.length > 2 ? process.argv.slice(2) : []
   }
 
