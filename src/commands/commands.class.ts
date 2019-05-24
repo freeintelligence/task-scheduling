@@ -1,7 +1,6 @@
-import { Scheduler } from './../scheduler.class'
 import { BaseCommand } from './../interfaces'
 import { Flag } from './../flags'
-import { Extra } from './../extras'
+import { Extra, Extras } from './../extras'
 
 /*
  * Commands instance
@@ -84,6 +83,7 @@ export class Commands {
    */
   public default(instance: BaseCommand) {
     this.container_default.push(Commands.fixCommand(instance))
+    return this
   }
 
   /**
@@ -96,7 +96,7 @@ export class Commands {
       }
     }
 
-    this.default(new command())
+    return this.default(new command())
   }
 
   /**
@@ -108,7 +108,9 @@ export class Commands {
       instance.extras = { }
     }
     if(typeof instance.name == 'string' && instance.name.length) {
-      this.extrasByName(instance)
+      const data = Extras.extrasByName(instance.name)
+      instance.name = data.name
+      instance.extras = Object.keys(data.extras).length ? data.extras : instance.extras
     }
     if(typeof instance.description !== 'string' || !instance.description.length) {
       instance.description = undefined
@@ -126,22 +128,17 @@ export class Commands {
   }
 
   /**
-   * Generate extras by name
+   * Get all commands (except default not found commands)
    */
-  private static extrasByName(instance: BaseCommand) {
-    const parts = (instance.name as string).split(' ')
+  public getAll() {
+    return this.container_commands
+  }
 
-    instance.name = [ parts[0] ]
-    parts.shift()
-
-    if(parts.length) {
-      instance.extras = { }
-
-      parts.forEach(part => {
-        const data = part.split('=', 2)
-        instance.extras[data[0]] = new Extra(data[0], { default: data.length == 2 ? data[1] : undefined })
-      })
-    }
+  /**
+   * Get default commands
+   */
+  public getDefaults() {
+    return this.container_default
   }
 
   /**
