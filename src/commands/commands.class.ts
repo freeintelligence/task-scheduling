@@ -147,7 +147,7 @@ export class Commands {
   /**
    * Get commands by name
    */
-  public getByName(name: string) {
+  public getByName(name: string, limit?: number) {
     let result: BaseCommand[]
 
     if(typeof name == 'undefined' || name == '') {
@@ -157,7 +157,9 @@ export class Commands {
       result = this.container_commands.filter(e => e.name.indexOf(name) !== -1)
     }
 
-    return result.length ? result : this.container_default
+    result = result.length ? result : this.container_default
+
+    return typeof limit == 'number' && limit > 0 ? result.slice(0, limit) : result
   }
 
 }
