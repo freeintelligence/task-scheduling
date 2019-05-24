@@ -53,6 +53,9 @@ export class Configure implements Settings {
    */
   set strict_mode(value: boolean) {
     this._strict_mode = value
+
+    this.strict_mode_on_commands = true
+    this.strict_mode_on_flags = true
   }
   get strict_mode() {
     return this._strict_mode
@@ -85,7 +88,9 @@ export class Configure implements Settings {
     this._global_help = value
 
     if(value) {
-      this.flags.push(new Flag('help', { alias: 'h', default: false, type: 'boolean', description: this.description_help } ))
+      if(!this.flags.exists('help')) {
+        this.flags.push(new Flag('help', { alias: 'h', default: false, type: 'boolean', description: this.description_help } ))
+      }
     }
     else {
       this.flags.remove('help')
