@@ -33,9 +33,9 @@ export class Scheduler {
 
     this.tasks = _tasks ? _tasks : this.processArgv()
     this.inspector = new Inspector(_tasks)
-    this.config = new Configure()
     this.commands = new Commands()
     this.flags = new Flags()
+    this.config = new Configure()
 
     if(_settings) {
       for(let i in _settings) {
