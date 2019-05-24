@@ -35,7 +35,7 @@ export class Scheduler {
     this.inspector = new Inspector(_tasks)
     this.commands = new Commands()
     this.flags = new Flags()
-    this.config = new Configure()
+    this.config = new Configure(this.flags)
 
     if(_settings) {
       for(let i in _settings) {

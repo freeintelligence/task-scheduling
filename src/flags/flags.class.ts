@@ -46,6 +46,13 @@ export class Flags {
   }
 
   /**
+   * Flag exists
+   */
+  public exists(name: string) {
+    return Boolean(this.getByName(name))
+  }
+
+  /**
    * Fix flag instance
    */
   private static fixFlag(instance: Flag) {
@@ -66,6 +73,13 @@ export class Flags {
     instance.value = instance.options.default
 
     return instance
+  }
+
+  /**
+   * Get all flags
+   */
+  public getAll() {
+    return this.container_flags
   }
 
   /**

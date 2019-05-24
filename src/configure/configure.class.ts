@@ -1,3 +1,5 @@
+import { Flags, Flag } from './../flags'
+
 /*
  * Settings
  * */
@@ -6,6 +8,7 @@ export interface Settings {
   strict_mode_on_commands?: boolean,
   strict_mode_on_flags?: boolean,
   global_help?: boolean,
+  description_help?: string
   exit_on_help?: boolean,
   catch?: (err: Error) => any,
 }
@@ -22,13 +25,21 @@ export class Configure implements Settings {
   private _strict_mode_on_commands?: boolean
   private _strict_mode_on_flags?: boolean
   private _global_help?: boolean
+  private _description_help?: string
   private _exit_on_help?: boolean
   private _catch?: (err: Error) => any
+
+  /**
+   * Parent instances
+   */
+  public flags: Flags
 
   /*
    * Constructor
    * */
-  constructor() {
+  constructor(flags: Flags) {
+    this.flags = flags
+
     this.strict_mode = true
     this.strict_mode_on_commands = true
     this.strict_mode_on_flags = true
@@ -72,9 +83,26 @@ export class Configure implements Settings {
    */
   set global_help(value: boolean) {
     this._global_help = value
+
+    if(value) {
+      this.flags.push(new Flag('help', { alias: 'h', default: false, type: 'boolean', description: this.description_help } ))
+    }
+    else {
+      this.flags.remove('help')
+    }
   }
   get global_help() {
     return this._global_help
+  }
+
+  /**
+   * Set and get description help (flag description)
+   */
+  set description_help(value: string) {
+    this._description_help = value
+  }
+  get description_help() {
+    return this._description_help || 'Show help'
   }
 
   /**
