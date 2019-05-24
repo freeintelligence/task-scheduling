@@ -49,7 +49,7 @@ export class Flags {
    * Flag exists
    */
   public exists(name: string) {
-    return Boolean(this.getByName(name))
+    return this.getByName(name).length
   }
 
   /**
