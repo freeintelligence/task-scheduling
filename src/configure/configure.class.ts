@@ -1,5 +1,3 @@
-import { Scheduler } from './../scheduler.class'
-
 /*
  * Settings
  * */
@@ -28,16 +26,9 @@ export class Configure implements Settings {
   public catch?: (err: Error) => any
 
   /*
-   * Scheduler instance
-   * */
-  private scheduler: Scheduler
-
-  /*
    * Constructor
    * */
-  constructor(scheduler: Scheduler) {
-    this.scheduler = scheduler
-
+  constructor() {
     this.strict_mode = true
     this.strict_mode_on_commands = true
     this.strict_mode_on_flags = true
