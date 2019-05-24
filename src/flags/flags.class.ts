@@ -63,6 +63,8 @@ export class Flags {
       instance.options.alias = undefined
     }
 
+    instance.value = instance.options.default
+
     return instance
   }
 
