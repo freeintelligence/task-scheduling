@@ -1,3 +1,4 @@
+import { Helper } from './helper'
 import { Configure, Settings } from './configure'
 import { Inspector } from './inspector'
 import { Commands } from './commands'
@@ -13,6 +14,7 @@ export class Scheduler {
    * Instance data
    */
   public tasks: string[]
+  public helper: Helper
   public inspector: Inspector
   public config: Configure
   public commands: Commands
@@ -36,6 +38,7 @@ export class Scheduler {
     this.commands = new Commands()
     this.flags = new Flags()
     this.config = new Configure(this.flags)
+    this.helper = new Helper()
 
     if(_settings) {
       for(let i in _settings) {
@@ -53,8 +56,11 @@ export class Scheduler {
       const command_name = this.inspector.thisOr(tasks).getCommand().name
       const commands = await this.commands.getByName(command_name, limit)
 
-      if(!commands.length && this.config.strict_mode_on_commands) {
+      this.helper.setHeaderDefault().setFlags(this.flags.getAll())
 
+      if(!commands.length && this.config.strict_mode_on_commands) {
+        this.helper.setErrorCommandNotFound(command_name).generate().print()
+        return []
       }
       else {
         for(let i in commands) {

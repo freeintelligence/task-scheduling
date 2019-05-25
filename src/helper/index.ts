@@ -1,1 +1,1 @@
-//export * from './helper.class'
+export * from './helper.class'
