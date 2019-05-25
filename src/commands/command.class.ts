@@ -37,6 +37,21 @@ export class BaseCommand {
   }
 
   /**
+   * Get complete command name (with extras)
+   */
+  public completeName(): string {
+    let name = this.mainName()
+    
+    if(!name) return '';
+
+    this.extrasLikeArray().forEach(extra => {
+      name = `${name} ${extra.beautyName()}`
+    })
+
+    return name
+  }
+
+  /**
    * Get flags like object
    */
   public flagsLikeObject(): { [key: string]: Flag } {
@@ -77,6 +92,25 @@ export class BaseCommand {
         return Object.values(this.flags)
       }
     }
+  }
+
+  /**
+   * Get extras like object
+   */
+  public extrasLikeObject(): { [key: string]: Extra } {
+    if(typeof this.extras == 'undefined' || this.extras == null) {
+      return { }
+    }
+    else {
+      return this.extras
+    }
+  }
+
+  /**
+   * Get extras like array
+   */
+  public extrasLikeArray(): Extra[] {
+    return Object.values(this.extrasLikeObject())
   }
 
 }
