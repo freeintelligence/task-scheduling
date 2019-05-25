@@ -21,6 +21,8 @@ export class Flag {
   constructor(name: string, options: OptionsFlag = { }) {
     this.name = name
     this.options = options || { }
+
+    if(typeof this.name == 'string') this.name = [ this.name ];
   }
 
   /**
@@ -28,6 +30,36 @@ export class Flag {
    */
   public isRequired(): boolean {
     return typeof this.options.default == 'undefined'
+  }
+
+  /**
+   * Get names
+   */
+  public getNames(): string[] {
+    return (<string[]>this.name).filter(e => e.length >= 2)
+  }
+
+  /**
+   * Get main name
+   */
+  public mainName(): string {
+    const names = this.getNames()
+    return names.length ? names[0] : null
+  }
+
+  /**
+   * Get aliases
+   */
+  public getAliases(): string[] {
+    return (<string[]>this.name).filter(e => e.length == 1)
+  }
+
+  /**
+   * Get main alias
+   */
+  public mainAlias(): string {
+    const aliases = this.getAliases()
+    return aliases.length ? aliases[0] : null
   }
 
 }

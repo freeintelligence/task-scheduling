@@ -11,6 +11,7 @@ export class HelpTranslations {
   usage: string
   command: string
   options: string
+  global_options: string
   without_options?: string
   command_not_found: string
 }
@@ -44,7 +45,8 @@ export class Helper {
       error: 'Error',
       usage: 'Use',
       command: 'command',
-      options: 'Options',
+      options: 'options',
+      global_options: 'Options',
       without_options: 'without options',
       command_not_found: 'The command "%s" does not exist.',
     }
@@ -83,7 +85,7 @@ export class Helper {
     else {
       this.messages.header =
         magenta(` ${this.translations.usage}: `)+'\n'+
-        `    ${str} [${this.translations.options.toLowerCase()}]`
+        `    ${str} [${this.translations.options}]`
     }
     return this
   }
@@ -99,12 +101,11 @@ export class Helper {
    * Set global flags
    */
   public setFlags(flags: Flag[]) {
-    this.messages.flags = magenta(` ${this.translations.options}: `)
+    this.messages.flags = magenta(` ${this.translations.global_options}: `)
 
     if(flags instanceof Array && flags.length) {
       flags.forEach((flag: Flag) => {
-        //console.log(flag)
-        this.messages.flags += '\n'+cyan(('   '+(Helper.nullOrUndefined(flag.options.alias) ? '  ' : '-'+flag.options.alias)+' '+'[--'+flag.name+'='+flag.options.default+']').padEnd(48))
+        this.messages.flags += '\n'+cyan(('   '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+flag.mainName()+'='+flag.options.default+']').padEnd(48))
         this.messages.flags += typeof flag.options.description != 'undefined' ? flag.options.description : ''
       })
     }
