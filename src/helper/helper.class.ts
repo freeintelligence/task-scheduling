@@ -105,7 +105,7 @@ export class Helper {
 
     if(flags instanceof Array && flags.length) {
       flags.forEach((flag: Flag) => {
-        this.messages.flags += '\n'+cyan(('   '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+flag.mainName()+'='+flag.options.default+']').padEnd(48))
+        this.messages.flags += '\n'+cyan(('   '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
         this.messages.flags += typeof flag.options.description != 'undefined' ? flag.options.description : ''
       })
     }
