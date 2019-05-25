@@ -143,13 +143,11 @@ export class Helper {
       this.messages.commands += cyan(('   '+main_name).padEnd(48))
       this.messages.commands += '⇒ '+(typeof command.description == 'string' ? command.description : '---')
 
-      if(command.flags instanceof Array && command.flags.length) {
-        command.flags.forEach((flag: Flag) => {
-          this.messages.commands += '\n'
-          this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.options.alias) ? '  ' : '-'+flag.options.alias)+' '+'[--'+flag.name+'='+flag.options.default+']').padEnd(48))
-          this.messages.commands += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'
-        })
-      }
+      command.flagsLikeArray().forEach((flag: Flag) => {
+        this.messages.commands += '\n'
+        this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
+        this.messages.commands += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'
+      })
     })
 
     return this
