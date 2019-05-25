@@ -122,7 +122,7 @@ export class Helper {
   /**
    * Set global commands
    */
-  public setCommands(commands: BaseCommand[]) {
+  public setCommands(commands: BaseCommand[], show_flags: boolean = true) {
     let separator: string
     this.messages.commands = magenta(` ${this.translations.available_commands}:`)
 
@@ -143,11 +143,13 @@ export class Helper {
       this.messages.commands += cyan(('   '+main_name).padEnd(48))
       this.messages.commands += '⇒ '+(typeof command.description == 'string' ? command.description : '---')
 
-      command.flagsLikeArray().forEach((flag: Flag) => {
-        this.messages.commands += '\n'
-        this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
-        this.messages.commands += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'
-      })
+      if(show_flags) {
+        command.flagsLikeArray().forEach((flag: Flag) => {
+          this.messages.commands += '\n'
+          this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
+          this.messages.commands += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'
+        })
+      }
     })
 
     return this

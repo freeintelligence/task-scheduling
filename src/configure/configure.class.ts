@@ -27,6 +27,7 @@ export class Configure implements Settings {
   private _global_help?: boolean
   private _description_help?: string
   private _exit_on_help?: boolean
+  private _show_flags_on_help?: boolean
   private _catch?: (err: Error) => any
 
   /**
@@ -45,6 +46,7 @@ export class Configure implements Settings {
     this.strict_mode_on_flags = true
     this.global_help = true
     this.exit_on_help = true
+    this.show_flags_on_help = true
     this.catch = (err) => { throw err }
   }
 
@@ -118,6 +120,16 @@ export class Configure implements Settings {
   }
   get exit_on_help() {
     return this._exit_on_help
+  }
+
+  /**
+   * Set and get show flags on help
+   */
+  set show_flags_on_help(value: boolean) {
+    this._show_flags_on_help = value
+  }
+  get show_flags_on_help() {
+    return this._show_flags_on_help
   }
 
   /**
