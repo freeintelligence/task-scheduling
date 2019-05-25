@@ -132,6 +132,7 @@ export class Helper {
     .sort((a: BaseCommand, b: BaseCommand) => a.name.indexOf(':'))
     .forEach((command: BaseCommand) => {
       const main_name = command.mainName()
+
       if(main_name.indexOf(':') !== -1 && main_name.split(':')[0] !== separator) {
         separator = main_name.split(':')[0]
 

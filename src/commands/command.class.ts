@@ -36,4 +36,47 @@ export class BaseCommand {
     return names.length ? names[0] : null
   }
 
+  /**
+   * Get flags like object
+   */
+  public flagsLikeObject(): { [key: string]: Flag } {
+    if(this.flags instanceof Array) {
+      const flags: { [key: string]: Flag } = { }
+
+      for(let i in this.flags) {
+        const flag = this.flags[i]
+        const name = flag.mainName() || flag.mainAlias()
+
+        flags[name] = flag
+      }
+
+      return flags
+    }
+    else {
+      if(typeof this.flags == 'undefined' || this.flags == null) {
+        return { }
+      }
+      else {
+        return this.flags
+      }
+    }
+  }
+
+  /**
+   * Get flags like array
+   */
+  public flagsLikeArray(): Flag[] {
+    if(this.flags instanceof Array) {
+      return this.flags
+    }
+    else {
+      if(typeof this.flags == 'undefined' || this.flags == null) {
+        return []
+      }
+      else {
+        return Object.values(this.flags)
+      }
+    }
+  }
+
 }
