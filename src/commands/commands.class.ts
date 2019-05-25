@@ -1,6 +1,5 @@
 import { BaseCommand } from './../commands'
 import { Flag } from './../flags'
-import { Extra, Extras } from './../extras'
 
 /*
  * Commands instance
@@ -33,7 +32,7 @@ export class Commands {
    * Register command
    */
   public push(instance: BaseCommand) {
-    this.container_commands.push(Commands.fixCommand(instance))
+    this.container_commands.push(instance)
     return this
   }
 
@@ -82,7 +81,7 @@ export class Commands {
    * Register default command
    */
   public default(instance: BaseCommand) {
-    this.container_default.push(Commands.fixCommand(instance))
+    this.container_default.push(instance)
     return this
   }
 
@@ -97,34 +96,6 @@ export class Commands {
     }
 
     return this.default(new command())
-  }
-
-  /**
-   * Fix command instance
-   */
-  private static fixCommand(instance: BaseCommand) {
-    if(typeof instance.name == 'undefined' || (typeof instance.name == 'string' && !instance.name.length) || (instance.name instanceof Array && !instance.name.length)) {
-      instance.name = [ ]
-      instance.extras = { }
-    }
-    if(typeof instance.name == 'string' && instance.name.length) {
-      const data = Extras.extrasByName(instance.name)
-      instance.name = data.name
-      instance.extras = Object.keys(data.extras).length ? data.extras : instance.extras
-    }
-    if(typeof instance.description !== 'string' || !instance.description.length) {
-      instance.description = undefined
-    }
-    if(typeof instance.flags !== 'object' || instance.flags == null || !(instance instanceof Object)) {
-      instance.flags = { }
-    }
-    if(typeof instance.extras == 'undefined' || !(instance.extras instanceof Object)) {
-      instance.extras = { }
-    }
-    if(typeof instance.run !== 'function') {
-      instance.run = async () => { }
-    }
-    return instance
   }
 
   /**
@@ -148,10 +119,10 @@ export class Commands {
     let result: BaseCommand[]
 
     if(typeof name == 'undefined' || name == '') {
-      result = this.container_commands.filter(e => !e.name.length)
+      result = this.container_commands.filter(e => !e.getNames().length)
     }
     else {
-      result = this.container_commands.filter(e => e.name.indexOf(name) !== -1)
+      result = this.container_commands.filter(e => e.getNames().indexOf(name) !== -1)
     }
 
     result = result.length ? result : this.container_default

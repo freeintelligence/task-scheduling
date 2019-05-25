@@ -127,24 +127,24 @@ export class Helper {
     this.messages.commands = magenta(` ${this.translations.available_commands}:`)
 
     commands
-    .filter((command: BaseCommand) => typeof command.mainName() == 'string' && command.mainName().length)
-    .sort((a: BaseCommand, b: BaseCommand) => Number(a.name > b.name))
-    .sort((a: BaseCommand, b: BaseCommand) => a.name.indexOf(':'))
+    .filter((command: BaseCommand) => command.getMainName())
+    .sort((a: BaseCommand, b: BaseCommand) => Number(a.getMainName() > b.getMainName()))
+    .sort((a: BaseCommand, b: BaseCommand) => a.getMainName().indexOf(':'))
     .forEach((command: BaseCommand) => {
-      const main_name = command.completeName()
+      const complete_name = command.getCompleteName()
 
-      if(main_name.indexOf(':') !== -1 && main_name.split(':')[0] !== separator) {
-        separator = main_name.split(':')[0]
+      if(complete_name.indexOf(':') !== -1 && complete_name.split(':')[0] !== separator) {
+        separator = complete_name.split(':')[0]
 
         this.messages.commands += '\n  '+italic(magenta(separator))
       }
 
       this.messages.commands += '\n'
-      this.messages.commands += cyan(('   '+main_name).padEnd(48))
-      this.messages.commands += '⇒ '+(typeof command.description == 'string' ? command.description : '---')
+      this.messages.commands += cyan(('   '+complete_name).padEnd(48))
+      this.messages.commands += '⇒ '+(command.getDescription() ? command.getDescription() : '---')
 
       if(show_flags) {
-        command.flagsLikeArray().forEach((flag: Flag) => {
+        command.getFlagsLikeArray().forEach((flag: Flag) => {
           this.messages.commands += '\n'
           this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
           this.messages.commands += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'

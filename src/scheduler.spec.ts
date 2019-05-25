@@ -1,5 +1,4 @@
 import { Scheduler } from './scheduler.class'
-import { ExtraNotFoundError } from './errors'
 
 describe('Scheduler instance', () => {
 

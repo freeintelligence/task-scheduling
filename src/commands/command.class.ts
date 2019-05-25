@@ -1,4 +1,4 @@
-import { Extra } from './../extras'
+import { Extra, Extras } from './../extras'
 import { Flag } from './../flags'
 
 /*
@@ -9,16 +9,15 @@ export class BaseCommand {
   /**
    * Instance data
    */
-  name?: string | string[]
-  description?: string
-  flags?: { [key: string]: Flag } | Flag[]
-  extras?: { [key: string]: Extra }
+  protected name?: string | string[]
+  protected description?: string
+  protected flags?: { [key: string]: Flag } | Flag[]
+  protected extras?: { [key: string]: Extra }
 
   /**
    * Constructor
    */
   constructor() {
-
   }
 
   /**
@@ -29,22 +28,52 @@ export class BaseCommand {
   }
 
   /**
+   * Get names
+   */
+  public getNames(): string[] {
+    if(typeof this.name == 'string' && this.name.length) {
+      const extras = Extras.extrasByName(this.name)
+
+      return [ extras.name ]
+    }
+    else if(typeof this.name == 'undefined' || (typeof this.name == 'string' && !this.name.length)) {
+      return [ ]
+    }
+    else if(this.name instanceof Array) {
+      return this.name
+    }
+
+    return [ ]
+  }
+
+  /**
+   * Get description
+   */
+  public getDescription(): string {
+    if(typeof this.description == 'string' && this.description.length) {
+      return this.description
+    }
+
+    return null
+  }
+
+  /**
    * Get main name
    */
-  public mainName(): string {
-    const names = <string[]>this.name
+  public getMainName(): string {
+    const names = this.getNames()
     return names.length ? names[0] : null
   }
 
   /**
    * Get complete command name (with extras)
    */
-  public completeName(): string {
-    let name = this.mainName()
+  public getCompleteName(): string {
+    let name = this.getMainName()
     
     if(!name) return '';
 
-    this.extrasLikeArray().forEach(extra => {
+    this.getExtrasLikeArray().forEach(extra => {
       name = `${name} ${extra.beautyName()}`
     })
 
@@ -54,7 +83,7 @@ export class BaseCommand {
   /**
    * Get flags like object
    */
-  public flagsLikeObject(): { [key: string]: Flag } {
+  public getFlagsLikeObject(): { [key: string]: Flag } {
     if(this.flags instanceof Array) {
       const flags: { [key: string]: Flag } = { }
 
@@ -80,7 +109,7 @@ export class BaseCommand {
   /**
    * Get flags like array
    */
-  public flagsLikeArray(): Flag[] {
+  public getFlagsLikeArray(): Flag[] {
     if(this.flags instanceof Array) {
       return this.flags
     }
@@ -97,7 +126,7 @@ export class BaseCommand {
   /**
    * Get extras like object
    */
-  public extrasLikeObject(): { [key: string]: Extra } {
+  public getExtrasLikeObject(): { [key: string]: Extra } {
     if(typeof this.extras == 'undefined' || this.extras == null) {
       return { }
     }
@@ -109,8 +138,8 @@ export class BaseCommand {
   /**
    * Get extras like array
    */
-  public extrasLikeArray(): Extra[] {
-    return Object.values(this.extrasLikeObject())
+  public getExtrasLikeArray(): Extra[] {
+    return Object.values(this.getExtrasLikeObject())
   }
 
 }
