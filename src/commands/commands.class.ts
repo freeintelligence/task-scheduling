@@ -1,4 +1,4 @@
-import { BaseCommand } from './../interfaces'
+import { BaseCommand } from './../commands'
 import { Flag } from './../flags'
 import { Extra, Extras } from './../extras'
 
@@ -65,7 +65,7 @@ export class Commands {
 
     if(typeof run == 'function') _run = run;
 
-    const command = class implements BaseCommand {
+    const command = class extends BaseCommand {
       public name: string | string[] = _name
       public description: string = _description
       public flags = _flags
@@ -90,7 +90,7 @@ export class Commands {
    * Register (simple) default command
    */
   public defaultSimple(run: Function) {
-    const command = class implements BaseCommand {
+    const command = class extends BaseCommand {
       async run(data) {
         return await run(data)
       }

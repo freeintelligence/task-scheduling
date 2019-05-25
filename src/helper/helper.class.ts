@@ -1,6 +1,6 @@
 import * as Util from 'util'
 import { magenta, red, cyan, italic, gray } from 'colors/safe'
-import { BaseCommand } from './../interfaces'
+import { BaseCommand } from './../commands'
 import { Flag } from './../flags'
 
 /**
@@ -12,8 +12,9 @@ export class HelpTranslations {
   command: string
   options: string
   global_options: string
-  without_options?: string
+  without_options: string
   command_not_found: string
+  available_commands: string
 }
 
 /**
@@ -24,6 +25,7 @@ export class HelpMessages {
   error?: string
   header?: string
   flags?: string
+  commands?: string
 }
 
 /*
@@ -49,6 +51,7 @@ export class Helper {
       global_options: 'Options',
       without_options: 'without options',
       command_not_found: 'The command "%s" does not exist.',
+      available_commands: 'Available commands',
     }
   }
 
@@ -116,6 +119,41 @@ export class Helper {
     return this
   }
 
+  /**
+   * Set global commands
+   */
+  public setCommands(commands: BaseCommand[]) {
+    let separator: string
+    this.messages.commands = magenta(` ${this.translations.available_commands}:`)
+
+    commands
+    .filter((command: BaseCommand) => typeof command.mainName() == 'string' && command.mainName().length)
+    .sort((a: BaseCommand, b: BaseCommand) => Number(a.name > b.name))
+    .sort((a: BaseCommand, b: BaseCommand) => a.name.indexOf(':'))
+    .forEach((command: BaseCommand) => {
+      const main_name = command.mainName()
+      if(main_name.indexOf(':') !== -1 && main_name.split(':')[0] !== separator) {
+        separator = main_name.split(':')[0]
+
+        this.messages.commands += '\n  '+italic(magenta(separator))
+      }
+
+      this.messages.commands += '\n'
+      this.messages.commands += cyan(('   '+main_name).padEnd(48))
+      this.messages.commands += '⇒ '+(typeof command.description == 'string' ? command.description : '---')
+
+      if(command.flags instanceof Array && command.flags.length) {
+        command.flags.forEach((flag: Flag) => {
+          this.messages.commands += '\n'
+          this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.options.alias) ? '  ' : '-'+flag.options.alias)+' '+'[--'+flag.name+'='+flag.options.default+']').padEnd(48))
+          this.messages.commands += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'
+        })
+      }
+    })
+
+    return this
+  }
+
   /*
    * Generate message by messages
    * */
@@ -125,6 +163,7 @@ export class Helper {
     if(typeof this.messages.error == 'string' && this.messages.error.length) this.messages.generated += `${this.messages.error}\n\n`;
     if(typeof this.messages.header == 'string' && this.messages.header.length) this.messages.generated += `${this.messages.header}\n\n`;
     if(typeof this.messages.flags == 'string' && this.messages.flags.length) this.messages.generated += `${this.messages.flags}\n\n`;
+    if(typeof this.messages.commands == 'string' && this.messages.commands.length) this.messages.generated += `${this.messages.commands}\n\n`;
 
     this.messages.generated = this.messages.generated.trimRight()
 

@@ -1,6 +1,7 @@
 export * from './interfaces'
 export * from './inspector'
 export * from './flags'
+export * from './commands'
 export * from './extras'
 //export * from './helper'
 export * from './configure'

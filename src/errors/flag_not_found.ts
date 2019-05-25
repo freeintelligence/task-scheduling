@@ -1,4 +1,4 @@
-import { BaseCommand } from './../interfaces'
+import { BaseCommand } from './../commands'
 
 /*
  * Flag not found error

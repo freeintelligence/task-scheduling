@@ -1,4 +1,4 @@
-import { BaseCommand } from './../interfaces'
+import { BaseCommand } from './../commands'
 
 /*
  * Extra not found error
