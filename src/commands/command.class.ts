@@ -96,43 +96,29 @@ export class BaseCommand {
 
       return flags
     }
-    else {
-      if(typeof this.flags == 'undefined' || this.flags == null) {
-        return { }
-      }
-      else {
-        return this.flags
-      }
+    else if(!(this.flags instanceof Object)) {
+      return { }
     }
+
+    return this.flags
   }
 
   /**
    * Get flags like array
    */
   public getFlagsLikeArray(): Flag[] {
-    if(this.flags instanceof Array) {
-      return this.flags
-    }
-    else {
-      if(typeof this.flags == 'undefined' || this.flags == null) {
-        return []
-      }
-      else {
-        return Object.values(this.flags)
-      }
-    }
+    return Object.values(this.getFlagsLikeObject())
   }
 
   /**
    * Get extras like object
    */
   public getExtrasLikeObject(): { [key: string]: Extra } {
-    if(typeof this.extras == 'undefined' || this.extras == null) {
+    if(!(this.extras instanceof Object)) {
       return { }
     }
-    else {
-      return this.extras
-    }
+
+    return this.extras
   }
 
   /**
