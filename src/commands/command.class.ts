@@ -114,11 +114,34 @@ export class BaseCommand {
    * Get extras like object
    */
   public getExtrasLikeObject(): { [key: string]: Extra } {
-    if(!(this.extras instanceof Object)) {
-      return { }
+    let extras: { [key: string]: Extra } = { }
+    let not_required: boolean = false
+
+    if(typeof this.name == 'string' && this.name.length) {
+      const data = Extras.extrasByName(this.name)
+
+      extras = data.extras
+    }
+    else if(!(this.extras instanceof Object)) {
+      extras = { }
+    }
+    else {
+      extras = this.extras
     }
 
-    return this.extras
+    for(let i in extras) {
+      const extra = extras[i]
+
+      if(!extra.isRequired() || not_required) {
+        not_required = true
+
+        if(!extra.getDefault()) {
+          extra.setDefault('')
+        }
+      }
+    }
+
+    return extras
   }
 
   /**

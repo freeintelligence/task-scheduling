@@ -22,6 +22,20 @@ export class Extra {
   }
 
   /**
+   * Get default
+   */
+  public getDefault(): string {
+    return this.options.default
+  }
+
+  /**
+   * Set default
+   */
+  public setDefault(data: string) {
+    return this.options.default = data
+  }
+
+  /**
    * Required
    */
   public isRequired(): boolean {
