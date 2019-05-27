@@ -51,16 +51,17 @@ export class Scheduler {
    * Execute scheduler
    */
   public async execute(tasks?: string[], limit?: number) {
-    try {
-      const result = []
-      const command_name = this.inspector.thisOr(tasks).getCommand().name
-      const commands = await this.commands.getByName(command_name, limit)
+    const result = []
+    const command_name = this.inspector.thisOr(tasks).getCommand().name
+    const commands = await this.commands.getByName(command_name, limit)
 
+    try {
       this.helper.setHeaderDefault().setFlags(this.flags.getAll()).setCommands(this.commands.getAll(), this.config.show_flags_on_help)
 
       if(!commands.length && this.config.strict_mode_on_commands) {
-        this.helper.setErrorCommandNotFound(command_name).generate().print()
-        return []
+        //this.helper.setErrorCommandNotFound(command_name).generate().print()
+        //return []
+        throw new Error(this.helper.setErrorCommandNotFound(command_name).generate().getMessage())
       }
       else {
         for(let i in commands) {
