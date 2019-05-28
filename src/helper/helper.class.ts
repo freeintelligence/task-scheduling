@@ -37,12 +37,20 @@ export class Helper {
    * Instance data
    */
   public translations: HelpTranslations
-  public messages: HelpMessages = { }
+  public messages: HelpMessages
 
   /**
    * Constructor
    */
   constructor() {
+    this.reset()
+  }
+
+  /**
+   * Reset
+   */
+  public reset() {
+    this.messages = { }
     this.translations = {
       error: 'Error',
       usage: 'Use',
