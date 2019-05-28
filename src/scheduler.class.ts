@@ -1,7 +1,8 @@
 import { Helper } from './helper'
 import { Configure, Settings } from './configure'
-import { Inspector } from './inspector'
-import { Commands } from './commands'
+import { Inspector, Resource } from './inspector'
+import { Commands, BaseCommand } from './commands'
+import { Extra } from './extras'
 import { Flags } from './flags'
 import { Middletasks } from './middletasks'
 import { CommandNotFoundError } from './errors'
@@ -70,17 +71,8 @@ export class Scheduler {
 
       for(let command_index in commands) {
         const command = commands[command_index]
-        const command_extras = command.getExtrasLikeObject()
 
-        for(let extra_index = 0; extra_index < Object.keys(command_extras).length; extra_index++) {
-          const command_extra = command_extras[Object.keys(command_extras)[extra_index]]
-
-          if(typeof command_extra.getDefault() == 'undefined' && (typeof inspector_extras[extra_index] == 'undefined' || typeof inspector_extras[extra_index].value == 'undefined')) {
-            throw new Error('Faltan extras!')
-          }
-
-          command_extra.value = typeof inspector_extras[extra_index] !== 'undefined' ? inspector_extras[extra_index].value : command_extra.getDefault()
-        }
+        this.setExtras(inspector_extras, command.getExtrasLikeArray())
 
         result.push(await command.run({ }))
       }
@@ -101,6 +93,21 @@ export class Scheduler {
    */
   public async executeByProcess() {
     return await this.execute(this.processArgv())
+  }
+
+  /**
+   * Set extras values
+   */
+  private setExtras(from: Resource[], to: Extra[]) {
+    for(let i = 0; i < to.length; i++) {
+      const extra = to[i]
+
+      if(typeof extra.getDefault() == 'undefined' && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined')) {
+        throw new Error('Faltan extras!')
+      }
+
+      extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()
+    }
   }
 
   /**

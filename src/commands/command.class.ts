@@ -117,7 +117,7 @@ export class BaseCommand {
     let extras: { [key: string]: Extra } = { }
     let not_required: boolean = false
 
-    if(typeof this.name == 'string' && this.name.length) {
+    if(typeof this.name == 'string' && this.name.length && !(this.extras instanceof Object)) {
       const data = Extras.extrasByName(this.name)
 
       extras = data.extras
@@ -149,6 +149,15 @@ export class BaseCommand {
    */
   public getExtrasLikeArray(): Extra[] {
     return Object.values(this.getExtrasLikeObject())
+  }
+
+  /**
+   * Fix instance
+   */
+  public fix() {
+    this.extras = this.getExtrasLikeObject()
+
+    return this
   }
 
 }

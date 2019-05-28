@@ -32,7 +32,7 @@ export class Commands {
    * Register command
    */
   public push(instance: BaseCommand) {
-    this.container_commands.push(instance)
+    this.container_commands.push(instance.fix())
     return this
   }
 
@@ -81,7 +81,7 @@ export class Commands {
    * Register default command
    */
   public default(instance: BaseCommand) {
-    this.container_default.push(instance)
+    this.container_default.push(instance.fix())
     return this
   }
 

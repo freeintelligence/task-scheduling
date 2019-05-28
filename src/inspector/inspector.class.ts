@@ -1,4 +1,13 @@
 /**
+ * Resource
+ */
+export interface Resource {
+  type?: 'command'|'extra'|'flag'|'flag-alias',
+  name?: string,
+  value?: string
+}
+
+/**
  * Inspector class
  */
 export class Inspector {
@@ -7,7 +16,7 @@ export class Inspector {
    * Data
    */
   private tasks: string[]
-  public resources: { type?: 'command'|'extra'|'flag'|'flag-alias', name?: string, value?: string }[] = []
+  public resources: Resource[] = []
 
   /**
    * Constructor
