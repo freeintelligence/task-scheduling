@@ -1,5 +1,5 @@
 import * as Util from 'util'
-import { magenta, red, cyan, italic, gray } from 'colors/safe'
+import { magenta, red, cyan, italic, gray, reset } from 'colors/safe'
 import { BaseCommand } from './../commands'
 import { Flag } from './../flags'
 
@@ -66,7 +66,7 @@ export class Helper {
       str = Util.format(str, ...args)
       this.messages.error =
         red(` ${this.translations.error}: `)+'\n'+
-        `    ${str}`
+        reset(`    ${str}`)
     }
     return this
   }
@@ -88,7 +88,7 @@ export class Helper {
     else {
       this.messages.header =
         magenta(` ${this.translations.usage}: `)+'\n'+
-        `    ${str} [${this.translations.options}]`
+        reset(`    ${str} [${this.translations.options}]`)
     }
     return this
   }
@@ -109,7 +109,7 @@ export class Helper {
     if(flags instanceof Array && flags.length) {
       flags.forEach((flag: Flag) => {
         this.messages.flags += '\n'+cyan(('   '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
-        this.messages.flags += typeof flag.options.description != 'undefined' ? flag.options.description : ''
+        this.messages.flags += reset(typeof flag.options.description != 'undefined' ? flag.options.description : '')
       })
     }
     else {
@@ -141,13 +141,13 @@ export class Helper {
 
       this.messages.commands += '\n'
       this.messages.commands += cyan(('   '+complete_name).padEnd(48))
-      this.messages.commands += '⇒ '+(command.getDescription() ? command.getDescription() : '---')
+      this.messages.commands += reset('⇒ '+(command.getDescription() ? command.getDescription() : '---'))
 
       if(show_flags) {
         command.getFlagsLikeArray().forEach((flag: Flag) => {
           this.messages.commands += '\n'
           this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
-          this.messages.commands += typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---'
+          this.messages.commands += reset(typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---')
         })
       }
     })

@@ -4,6 +4,7 @@ import { Inspector } from './inspector'
 import { Commands } from './commands'
 import { Flags } from './flags'
 import { Middletasks } from './middletasks'
+import { CommandNotFoundError } from './errors'
 
 /**
  * Scheduler
@@ -74,7 +75,12 @@ export class Scheduler {
       return result
     }
     catch(err) {
-      await this.config.catch(err)
+      if(err instanceof CommandNotFoundError) {
+        throw err
+      }
+      else {
+        await this.config.catch(err)
+      }
     }
   }
 
