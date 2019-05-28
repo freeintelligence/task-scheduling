@@ -57,7 +57,7 @@ export class Scheduler {
     const inspector_command = inspector.getCommand()
     const inspector_extras = inspector.getExtras()
     const inspector_flags = inspector.getFlags()
-    const commands = await this.commands.getByName(inspector_command.name, limit)
+    const commands = await this.commands.getByName(inspector_command.value, limit)
     const global_flags = this.flags.getAll()
     const global_commands = this.commands.getAll()
 
@@ -67,21 +67,29 @@ export class Scheduler {
       if(!commands.length && this.config.strict_mode_on_commands) {
         throw new CommandNotFoundError()
       }
-      else {
-        console.log(inspector_extras)
 
-        for(let i in commands) {
-          const command = commands[i]
+      for(let command_index in commands) {
+        const command = commands[command_index]
+        const command_extras = command.getExtrasLikeObject()
 
-          result.push(await command.run({ }))
+        for(let extra_index = 0; extra_index < Object.keys(command_extras).length; extra_index++) {
+          const command_extra = command_extras[Object.keys(command_extras)[extra_index]]
+
+          if(typeof command_extra.getDefault() == 'undefined' && (typeof inspector_extras[extra_index] == 'undefined' || typeof inspector_extras[extra_index].value == 'undefined')) {
+            throw new Error('Faltan extras!')
+          }
+
+          command_extra.value = typeof inspector_extras[extra_index] !== 'undefined' ? inspector_extras[extra_index].value : command_extra.getDefault()
         }
+
+        result.push(await command.run({ }))
       }
 
       return result
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {
-        err.stack = this.helper.setErrorCommandNotFound(inspector_command.name).generate().getMessage()
+        err.stack = this.helper.setErrorCommandNotFound(inspector_command.value).generate().getMessage()
       }
 
       await this.config.catch(err)
