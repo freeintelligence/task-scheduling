@@ -72,7 +72,7 @@ export class Scheduler {
       for(let command_index in commands) {
         const command = commands[command_index]
 
-        this.setExtras(inspector_extras, command.getExtrasLikeArray())
+        this.setExtras(command, inspector_extras, command.getExtrasLikeArray())
 
         result.push(await command.run({ }))
       }
@@ -84,7 +84,7 @@ export class Scheduler {
         err.stack = this.helper.setErrorCommandNotFound(err.command_name).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
       }
       else if(err instanceof MissingExtrasError) {
-
+        err.stack = this.helper.setErrorMissingExtra(err.command.getMainName(), err.extra.beautyName()).setHeader(`${err.command.getCompleteName()}`).setFlags(global_flags.concat(err.command.getFlagsLikeArray())).generate().getMessage()
       }
 
       await this.config.catch(err)
@@ -101,12 +101,12 @@ export class Scheduler {
   /**
    * Set extras values
    */
-  private setExtras(from: Resource[], to: Extra[]) {
+  private setExtras(command: BaseCommand, from: Resource[], to: Extra[]) {
     for(let i = 0; i < to.length; i++) {
       const extra = to[i]
 
       if(typeof extra.getDefault() == 'undefined' && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined')) {
-        throw new MissingExtrasError()
+        throw new MissingExtrasError(command, extra)
       }
 
       extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()

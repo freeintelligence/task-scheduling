@@ -15,6 +15,7 @@ export class HelpTranslations {
   without_options: string
   command_not_found: string
   available_commands: string
+  missing_extra: string
 }
 
 /**
@@ -60,6 +61,7 @@ export class Helper {
       without_options: 'without options',
       command_not_found: 'The command "%s" does not exist.',
       available_commands: 'Available commands',
+      missing_extra: 'The "%s" command needs the "%s" argument.'
     }
 
     return this
@@ -86,6 +88,13 @@ export class Helper {
    */
   public setErrorCommandNotFound(command_name: string) {
     return this.setError(this.translations.command_not_found, command_name)
+  }
+
+  /**
+   * Set error message: missing extra
+   */
+  public setErrorMissingExtra(command_name: string, extra: string) {
+    return this.setError(this.translations.missing_extra, command_name, extra)
   }
 
   /*
