@@ -102,7 +102,7 @@ export class Inspector {
         }
       }
       else if(Inspector.isCommand(task)) {
-        this.resources.push({ type: !this.resources.find(e => e.type == 'command') ? 'command' : 'extra', name: task })
+        this.resources.push({ type: !this.resources.find(e => e.type == 'command') ? 'command' : 'extra', value: task })
       }
     }
   }

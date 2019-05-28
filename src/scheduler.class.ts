@@ -53,18 +53,23 @@ export class Scheduler {
    */
   public async execute(tasks?: string[], limit?: number) {
     const result = []
-    const command_name = this.inspector.thisOr(tasks).getCommand().name
-    const commands = await this.commands.getByName(command_name, limit)
+    const inspector = this.inspector.thisOr(tasks)
+    const inspector_command = inspector.getCommand()
+    const inspector_extras = inspector.getExtras()
+    const inspector_flags = inspector.getFlags()
+    const commands = await this.commands.getByName(inspector_command.name, limit)
+    const global_flags = this.flags.getAll()
+    const global_commands = this.commands.getAll()
 
     try {
-      this.helper.setHeaderDefault().setFlags(this.flags.getAll()).setCommands(this.commands.getAll(), this.config.show_flags_on_help)
+      this.helper.reset().setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help)
 
       if(!commands.length && this.config.strict_mode_on_commands) {
-        //this.helper.setErrorCommandNotFound(command_name).generate().print()
-        //return []
-        throw new Error(this.helper.setErrorCommandNotFound(command_name).generate().getMessage())
+        throw new CommandNotFoundError()
       }
       else {
+        console.log(inspector_extras)
+
         for(let i in commands) {
           const command = commands[i]
 
@@ -76,11 +81,10 @@ export class Scheduler {
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {
-        throw err
+        err.stack = this.helper.setErrorCommandNotFound(inspector_command.name).generate().getMessage()
       }
-      else {
-        await this.config.catch(err)
-      }
+
+      await this.config.catch(err)
     }
   }
 
