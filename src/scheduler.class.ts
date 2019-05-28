@@ -5,7 +5,7 @@ import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags } from './flags'
 import { Middletasks } from './middletasks'
-import { CommandNotFoundError } from './errors'
+import { CommandNotFoundError, MissingExtrasError } from './errors'
 
 /**
  * Scheduler
@@ -83,6 +83,9 @@ export class Scheduler {
       if(err instanceof CommandNotFoundError) {
         err.stack = this.helper.setErrorCommandNotFound(inspector_command.value).generate().getMessage()
       }
+      else if(err instanceof MissingExtrasError) {
+        
+      }
 
       await this.config.catch(err)
     }
@@ -103,7 +106,7 @@ export class Scheduler {
       const extra = to[i]
 
       if(typeof extra.getDefault() == 'undefined' && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined')) {
-        throw new Error('Faltan extras!')
+        throw new MissingExtrasError()
       }
 
       extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()
