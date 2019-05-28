@@ -61,6 +61,8 @@ export class Helper {
       command_not_found: 'The command "%s" does not exist.',
       available_commands: 'Available commands',
     }
+
+    return this
   }
 
   /*
