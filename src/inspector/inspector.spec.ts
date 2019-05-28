@@ -46,8 +46,8 @@ describe('Instance tests', () => {
     const inspector = new Inspector([ 'command-name', 'extra-name', '--flag-1', 'value-flag-1', '--flag-2', '-c=value', '-t' ])
 
     expect(inspector.resources).toEqual([
-      { type: 'command', name: 'command-name' },
-      { type: 'extra', name: 'extra-name' },
+      { type: 'command', value: 'command-name' },
+      { type: 'extra', value: 'extra-name' },
       { type: 'flag', name: 'flag-1', value: 'value-flag-1' },
       { type: 'flag', name: 'flag-2', value: '' },
       { type: 'flag-alias', name: 'c', value: 'value' },
