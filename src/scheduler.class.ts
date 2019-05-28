@@ -63,10 +63,10 @@ export class Scheduler {
     const global_commands = this.commands.getAll()
 
     try {
-      this.helper.reset().setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help)
+      this.helper.reset()
 
       if(!commands.length && this.config.strict_mode_on_commands) {
-        throw new CommandNotFoundError()
+        throw new CommandNotFoundError(inspector_command.value)
       }
 
       for(let command_index in commands) {
@@ -81,10 +81,10 @@ export class Scheduler {
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {
-        err.stack = this.helper.setErrorCommandNotFound(inspector_command.value).generate().getMessage()
+        err.stack = this.helper.setErrorCommandNotFound(err.command_name).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
       }
       else if(err instanceof MissingExtrasError) {
-        
+
       }
 
       await this.config.catch(err)
