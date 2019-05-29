@@ -5,7 +5,7 @@ import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags, Flag } from './flags'
 import { Middletasks } from './middletasks'
-import { CommandNotFoundError, MissingExtrasError } from './errors'
+import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError } from './errors'
 
 /**
  * Scheduler
@@ -86,7 +86,17 @@ export class Scheduler {
         err.stack = this.helper.setErrorCommandNotFound(err.command_name).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
       }
       else if(err instanceof MissingExtrasError) {
-        err.stack = this.helper.setErrorMissingExtra(err.command.getMainName(), err.extra.beautyName()).setHeader(`${err.command.getCompleteName()}`).setFlags(global_flags.concat(err.command.getFlagsLikeArray())).generate().getMessage()
+        err.stack = this.helper.setErrorMissingExtra(err.command.getMainName(), err.extra.beautyName()).setHeader(err.command.getCompleteName()).setFlags(global_flags.concat(err.command.getFlagsLikeArray())).generate().getMessage()
+      }
+      else if(err instanceof RequiredFlagValueError) {
+        if(err.command.getMainName().length) {
+          this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeader(err.command.getCompleteName()).setFlags(global_flags.concat(err.command.getFlagsLikeArray()))
+        }
+        else {
+          this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help)
+        }
+
+        err.stack = this.helper.generate().getMessage()
       }
 
       await this.config.catch(err)
@@ -126,6 +136,10 @@ export class Scheduler {
     for(let i = 0; i < to.length; i++) {
       const flag = to[i]
       const resource = from.find(e => (e.type == 'flag' && e.name == flag.getMainName()) || (e.type == 'flag-alias' && e.name == flag.getMainAlias()))
+
+      if(!resource && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
+        throw new RequiredFlagValueError(command, flag)
+      }
     }
   }
 

@@ -76,4 +76,30 @@ export class Flag {
     return this.getMainName() || this.getMainAlias()
   }
 
+  /**
+   * Beauty name (for print)
+   */
+  public beautyName(): string {
+    let name = ''
+
+    if(this.getMainAlias()) {
+      name += name.length ? ' '+name : ''
+      name += `-${this.getMainAlias()}`
+    }
+    if(this.getMainName() || !this.isRequired()) {
+      name += (name.length ? ' '+name : '')+'['
+
+      if(this.getMainName()) {
+        name += `--${this.getMainName()}`
+      }
+      if(!this.isRequired()) {
+        name += `=${this.getDefault()}`
+      }
+
+      name += ']'
+    }
+
+    return name
+  }
+
 }

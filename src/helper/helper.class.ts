@@ -16,6 +16,7 @@ export class HelpTranslations {
   command_not_found: string
   available_commands: string
   missing_extra: string
+  required_flag_value: string
 }
 
 /**
@@ -61,7 +62,8 @@ export class Helper {
       without_options: 'without options',
       command_not_found: 'The command "%s" does not exist.',
       available_commands: 'Available commands',
-      missing_extra: 'The "%s" command needs the "%s" argument.'
+      missing_extra: 'The "%s" command needs the "%s" argument.',
+      required_flag_value: 'The "%s" flag is required.',
     }
 
     return this
@@ -95,6 +97,13 @@ export class Helper {
    */
   public setErrorMissingExtra(command_name: string, extra: string) {
     return this.setError(this.translations.missing_extra, command_name, extra)
+  }
+
+  /**
+   * Set error message: required flag value
+   */
+  public setErrorRequiredFlagValue(flag: string) {
+    return this.setError(this.translations.required_flag_value, flag)
   }
 
   /*
