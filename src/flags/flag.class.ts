@@ -113,7 +113,7 @@ export class Flag {
     let name = ''
 
     if(this.getMainAlias()) {
-      name += name.length ? ' '+name : ''
+      name = name.length ? ' '+name : ''
       name += `-${this.getMainAlias()}`
     }
     if(this.getMainName() || !this.isRequired()) {
