@@ -72,7 +72,9 @@ export class Scheduler {
       for(let command_index in commands) {
         const command = commands[command_index]
 
+        console.log(inspector_flags)
         this.setExtras(command, inspector_extras, command.getExtrasLikeArray())
+        this.setFlags()
 
         result.push(await command.run({ }))
       }
@@ -111,6 +113,13 @@ export class Scheduler {
 
       extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()
     }
+  }
+
+  /**
+   * Set flags values
+   */
+  private setFlags() {
+
   }
 
   /**
