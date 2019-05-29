@@ -70,7 +70,6 @@ export class Scheduler {
       }
 
       for(let command_index in commands) {
-        inspector.resources.map(e => e.)
         const command = commands[command_index]
 
         console.log(inspector_flags)
@@ -126,7 +125,7 @@ export class Scheduler {
 
     for(let i = 0; i < to.length; i++) {
       const flag = to[i]
-      const resource = from.find(e => (e.type == 'flag' && e.name == flag.mainName()) || (e.type == 'flag-alias' && e.name == flag.mainAlias()))
+      const resource = from.find(e => (e.type == 'flag' && e.name == flag.getMainName()) || (e.type == 'flag-alias' && e.name == flag.getMainAlias()))
     }
   }
 

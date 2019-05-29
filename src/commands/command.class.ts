@@ -89,7 +89,7 @@ export class BaseCommand {
 
       for(let i in this.flags) {
         const flag = this.flags[i]
-        const name = flag.mainName() || flag.mainAlias()
+        const name = flag.getFirstName()
 
         flags[name] = flag
       }

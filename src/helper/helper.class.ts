@@ -127,7 +127,7 @@ export class Helper {
 
     if(flags instanceof Array && flags.length) {
       flags.forEach((flag: Flag) => {
-        this.messages.flags += '\n'+cyan(('   '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
+        this.messages.flags += '\n'+cyan(('   '+(Helper.nullOrUndefined(flag.getMainAlias()) ? '  ' : '-'+flag.getMainAlias())+' '+'[--'+(flag.getMainName() ? flag.getMainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
         this.messages.flags += reset(typeof flag.options.description != 'undefined' ? flag.options.description : '')
       })
     }
@@ -165,7 +165,7 @@ export class Helper {
       if(show_flags) {
         command.getFlagsLikeArray().forEach((flag: Flag) => {
           this.messages.commands += '\n'
-          this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.mainAlias()) ? '  ' : '-'+flag.mainAlias())+' '+'[--'+(flag.mainName() ? flag.mainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
+          this.messages.commands += gray(('     '+(Helper.nullOrUndefined(flag.getMainAlias()) ? '  ' : '-'+flag.getMainAlias())+' '+'[--'+(flag.getMainName() ? flag.getMainName() : '')+(flag.options.default ? '='+flag.options.default : '')+']').padEnd(48))
           this.messages.commands += reset(typeof flag.options.description == 'string' && flag.options.description.length  ? '  ⇒ '+flag.options.description : '  ⇒ ---')
         })
       }
