@@ -33,6 +33,13 @@ export class Flag {
   }
 
   /**
+   * Get default value
+   */
+  public getDefault() {
+    return this.options.default
+  }
+  
+  /**
    * Get names
    */
   public getNames(): string[] {
@@ -42,7 +49,7 @@ export class Flag {
   /**
    * Get main name
    */
-  public mainName(): string {
+  public getMainName(): string {
     const names = this.getNames()
     return names.length ? names[0] : null
   }
@@ -57,7 +64,7 @@ export class Flag {
   /**
    * Get main alias
    */
-  public mainAlias(): string {
+  public getMainAlias(): string {
     const aliases = this.getAliases()
     return aliases.length ? aliases[0] : null
   }

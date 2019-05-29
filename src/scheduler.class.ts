@@ -3,7 +3,7 @@ import { Configure, Settings } from './configure'
 import { Inspector, Resource } from './inspector'
 import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
-import { Flags } from './flags'
+import { Flags, Flag } from './flags'
 import { Middletasks } from './middletasks'
 import { CommandNotFoundError, MissingExtrasError } from './errors'
 
@@ -70,11 +70,12 @@ export class Scheduler {
       }
 
       for(let command_index in commands) {
+        inspector.resources.map(e => e.)
         const command = commands[command_index]
 
         console.log(inspector_flags)
-        this.setExtras(command, inspector_extras, command.getExtrasLikeArray())
-        this.setFlags()
+        this.setExtras(command, inspector_extras)
+        this.setFlags(command, inspector_flags)
 
         result.push(await command.run({ }))
       }
@@ -103,7 +104,9 @@ export class Scheduler {
   /**
    * Set extras values
    */
-  private setExtras(command: BaseCommand, from: Resource[], to: Extra[]) {
+  private setExtras(command: BaseCommand, from: Resource[]) {
+    const to: Extra[] = command.getExtrasLikeArray()
+
     for(let i = 0; i < to.length; i++) {
       const extra = to[i]
 
@@ -118,8 +121,13 @@ export class Scheduler {
   /**
    * Set flags values
    */
-  private setFlags() {
+  private setFlags(command: BaseCommand, from: Resource[]) {
+    const to: Flag[] = command.getFlagsLikeArray()
 
+    for(let i = 0; i < to.length; i++) {
+      const flag = to[i]
+      const resource = from.find(e => (e.type == 'flag' && e.name == flag.mainName()) || (e.type == 'flag-alias' && e.name == flag.mainAlias()))
+    }
   }
 
   /**
