@@ -140,6 +140,8 @@ export class Scheduler {
       if(!resource && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
         throw new RequiredFlagValueError(command, flag)
       }
+
+      flag.value = resource && typeof resource.value !== 'undefined' ? resource.value : flag.getDefault()
     }
   }
 
