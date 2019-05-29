@@ -14,15 +14,16 @@ interface OptionsFlag {
  * */
 export class Flag {
 
-  public name: string | string[]
-  public options: OptionsFlag = { }
+  /**
+   * Instance data
+   */
+  protected name: string | string[]
+  protected options: OptionsFlag = { }
   public value: any
 
   constructor(name: string, options: OptionsFlag = { }) {
     this.name = name
     this.options = options || { }
-
-    if(typeof this.name == 'string') this.name = [ this.name ];
   }
 
   /**
@@ -40,10 +41,32 @@ export class Flag {
   }
 
   /**
-   * Get names
+   * Get all names (names and aliases)
+   */
+  public getAllNames(): string[] {
+    let names: string[] = []
+
+    if(typeof this.name == 'string' && this.name.length) {
+      names.push(this.name)
+    }
+    else if(this.name instanceof Array) {
+      names = names.concat(this.name)
+    }
+    if(typeof this.options.alias == 'string' && this.options.alias.length) {
+      names.push(this.options.alias)
+    }
+    else if(this.options.alias instanceof Array) {
+      names = names.concat(this.options.alias)
+    }
+
+    return names
+  }
+
+  /**
+   * Get names (only names, not aliases)
    */
   public getNames(): string[] {
-    return (<string[]>this.name).filter(e => e.length >= 2)
+    return this.getAllNames().filter(e => e.length >= 2)
   }
 
   /**
@@ -58,7 +81,7 @@ export class Flag {
    * Get aliases
    */
   public getAliases(): string[] {
-    return (<string[]>this.name).filter(e => e.length == 1)
+    return this.getAllNames().filter(e => e.length == 1)
   }
 
   /**
