@@ -135,7 +135,7 @@ export class Scheduler {
 
     for(let i = 0; i < to.length; i++) {
       const flag = to[i]
-      const resource = from.find(e => (e.type == 'flag' && e.name == flag.getMainName()) || (e.type == 'flag-alias' && e.name == flag.getMainAlias()))
+      const resource = from.find(e => (e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
 
       if(!resource && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
         throw new RequiredFlagValueError(command, flag)
