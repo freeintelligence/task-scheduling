@@ -117,7 +117,7 @@ export class Flag {
       name += `-${this.getMainAlias()}`
     }
     if(this.getMainName() || !this.isRequired()) {
-      name = (name.length ? ' '+name+' ' : '')+'['
+      name = (name.length ? name+' ' : '')+'['
 
       if(this.getMainName()) {
         name += `--${this.getMainName()}`
