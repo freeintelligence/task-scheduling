@@ -41,6 +41,13 @@ export class Flag {
   }
 
   /**
+   * Get description
+   */
+  public getDescription(): string {
+    return typeof this.options.description == 'string' && this.options.description.length ? this.options.description : null
+  }
+
+  /**
    * Get all names (names and aliases)
    */
   public getAllNames(): string[] {
@@ -110,7 +117,7 @@ export class Flag {
       name += `-${this.getMainAlias()}`
     }
     if(this.getMainName() || !this.isRequired()) {
-      name += (name.length ? ' '+name : '')+'['
+      name = (name.length ? ' '+name+' ' : '')+'['
 
       if(this.getMainName()) {
         name += `--${this.getMainName()}`
