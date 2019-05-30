@@ -36,7 +36,7 @@ export class Flag {
    * Set value
    */
   set value(value: any) {
-    this.internal_value = Flags.parseValue(this, value, this.options.type, this.options.subtype)
+    this.internal_value = Flags.parseValue(this, value, this.options.type, this.options.subtype, this.options.type == 'array' ? this.options.type : undefined)
   }
 
   /**
