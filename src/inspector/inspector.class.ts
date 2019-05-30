@@ -2,10 +2,11 @@
  * Resource
  */
 export interface Resource {
+  index: number,
   type?: 'command'|'extra'|'flag'|'flag-alias',
   name?: string,
   value?: string,
-  used?: boolean
+  used?: boolean,
 }
 
 /**
@@ -105,14 +106,14 @@ export class Inspector {
         const name = Inspector.getOnlyFlagName(task)
         const value = Inspector.getOnlyFlagValue(Inspector.isFlagWithValue(task) ? task : tasks.slice(i+1))
 
-        this.resources.push({ type: type, name: name, value: value })
+        this.resources.push({ index: i, type: type, name: name, value: value })
 
         if(!Inspector.isFlag(next)) {
           i++
         }
       }
       else if(Inspector.isCommand(task)) {
-        this.resources.push({ type: !this.resources.find(e => e.type == 'command') ? 'command' : 'extra', value: task })
+        this.resources.push({ index: i, type: !this.resources.find(e => e.type == 'command') ? 'command' : 'extra', value: task })
       }
     }
   }

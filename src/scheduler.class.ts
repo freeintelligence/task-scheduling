@@ -77,7 +77,6 @@ export class Scheduler {
 
         last_command = commands[command_index]
 
-        console.log(inspector_flags)
         this.setExtras(last_command, inspector_extras)
         this.setFlags(last_command, inspector_flags, inspector_extras)
 
@@ -168,6 +167,8 @@ export class Scheduler {
         if(!resources.length && flag.isRequired()) {
           throw new RequiredFlagValueError(command, flag)
         }
+
+        console.log(resources)
       }
     }
   }
