@@ -82,7 +82,7 @@ export class Scheduler {
         inspector_flags.map(e => e.used = false)
 
         this.setExtras(last_command, inspector_extras)
-        this.setFlags(last_command, inspector_flags, inspector_extras)
+        this.setFlags(last_command, global_flags, inspector_flags, inspector_extras)
         this.setTemporalExtras(last_command, inspector_extras.filter(e => !e.used))
         this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
 
@@ -102,7 +102,7 @@ export class Scheduler {
         err.stack = this.helper.setErrorMissingExtra(err.command.getMainName(), err.extra.beautyName()).setHeader(err.command.getCompleteName()).setFlags(global_flags.concat(err.command.getFlagsLikeArray())).generate().getMessage()
       }
       else if(err instanceof RequiredFlagValueError) {
-        if(err.command.getMainName().length) {
+        if(err.command.getMainName() && err.command.getMainName().length) {
           this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeader(err.command.getCompleteName()).setFlags(global_flags.concat(err.command.getFlagsLikeArray()))
         }
         else {
@@ -112,7 +112,7 @@ export class Scheduler {
         err.stack = this.helper.generate().getMessage()
       }
       else if(err instanceof InvalidFlagValueError) {
-        if(last_command.getMainName().length) {
+        if(last_command.getMainName() && last_command.getMainName().length) {
           this.helper.setErrorInvalidFlagValue(err.flag.beautyName(), err.expected, err.received).setHeader(last_command.getCompleteName()).setFlags(global_flags.concat(last_command.getFlagsLikeArray()))
         }
         else {
@@ -166,8 +166,8 @@ export class Scheduler {
   /**
    * Set flags values
    */
-  private setFlags(command: BaseCommand, from: Resource[], values_to_array: Resource[]) {
-    const to: Flag[] = command.getFlagsLikeArray()
+  private setFlags(command: BaseCommand, global_flags: Flag[], from: Resource[], values_to_array: Resource[]) {
+    const to: Flag[] = command.getFlagsLikeArray().concat(global_flags)
 
     for(let i = 0; i < to.length; i++) {
       const flag = to[i]

@@ -80,7 +80,7 @@ export class Flags {
     else if(to_type == 'boolean') {
       if(typeof value == 'boolean') value = value;
       else if(typeof value == 'string' && (value.trim().toLowerCase() == 'false' || value.trim() == '0')) value = false;
-      else if(typeof value == 'string' && (value.trim().toLowerCase() == 'true' || value.trim() == '1')) value = true;
+      else if(typeof value == 'string' && (value.trim().toLowerCase() == 'true' || value.trim() == '1' || value.trim() == '')) value = true;
       else throw new InvalidFlagValueError(flag, this.flagWithParent(to_type, parenttype), this.flagWithParent(typeof value, parenttype));
     }
 
