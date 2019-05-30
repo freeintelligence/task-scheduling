@@ -161,7 +161,7 @@ export class Scheduler {
       if(flag.options.type !== 'array') {
         const resource_flag = from.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
 
-        if(!resource_flag && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
+        if(!resource_flag && typeof flag.isRequired()) {
           throw new RequiredFlagValueError(command, flag)
         }
 
