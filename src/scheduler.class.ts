@@ -138,7 +138,10 @@ export class Scheduler {
       }
 
       extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()
-      from[i].used = true
+
+      if(from) {
+        from[i].used = true
+      }
     }
   }
 
@@ -152,23 +155,37 @@ export class Scheduler {
       const flag = to[i]
 
       if(flag.options.type !== 'array') {
-        const resource = from.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
+        const resource_flag = from.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
 
-        if(!resource && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
+        if(!resource_flag && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
           throw new RequiredFlagValueError(command, flag)
         }
 
-        flag.value = resource && typeof resource.value !== 'undefined' ? resource.value : flag.getDefault()
-        resource.used = true
+        flag.value = resource_flag && typeof resource_flag.value !== 'undefined' ? resource_flag.value : flag.getDefault()
+
+        if(resource_flag) {
+          resource_flag.used = true
+        }
       }
       else {
-        const resources = values_to_array.filter(e => !e.used)
+        const resource_flag = from.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
+        const resource_values = values_to_array.filter(e => !e.used && e.index >= resource_flag.index)
+        const arr: any[] = []
 
-        if(!resources.length && flag.isRequired()) {
+        if(!resource_values.length && flag.isRequired()) {
           throw new RequiredFlagValueError(command, flag)
         }
 
-        console.log(resources)
+        if(typeof resource_flag.value !== 'undefined') {
+          arr.push(resource_flag.value)
+        }
+
+        resource_values.forEach(resource => {
+          arr.push(resource.value)
+          resource.used = true
+        })
+
+        flag.value = arr
       }
     }
   }
