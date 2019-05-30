@@ -8,7 +8,7 @@ export class UnknownFlagError extends Error {
   constructor(flag: string) {
     super()
 
-    this.flag = flag
+    this.flag = flag.length == 1 ? `-${flag}` : `--${flag}`
   }
 
 }
