@@ -1,3 +1,5 @@
+import { InvalidFlagValueError } from './../errors'
+
 /*
  * Options
  * */
@@ -19,11 +21,38 @@ export class Flag {
    */
   protected name: string | string[]
   protected options: OptionsFlag = { }
-  public value: any
+  protected internal_value: any
 
   constructor(name: string, options: OptionsFlag = { }) {
     this.name = name
     this.options = options || { }
+  }
+
+  /**
+   * Set value
+   */
+  set value(value: any) {
+    if(this.options.type == 'string') {
+      if(typeof value == 'boolean' || typeof value == 'number' || typeof value == 'string') value = value.toString();
+      else if(typeof value == 'object') value = JSON.stringify(value);
+      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
+    }
+
+    else if(this.options.type == 'boolean') {
+      if(typeof value == 'boolean') value = value
+      else if(typeof value == 'string' && (value.trim().toLowerCase() == 'false' || value.trim() == '0')) value = false;
+      else if(typeof value == 'string' && (value.trim().toLowerCase() == 'true' || value.trim() == '1')) value = true;
+      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
+    }
+
+    this.internal_value = value
+  }
+
+  /**
+   * Get value
+   */
+  get value(): any {
+    return this.internal_value
   }
 
   /**
