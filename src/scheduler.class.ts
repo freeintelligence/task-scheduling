@@ -205,6 +205,7 @@ export class Scheduler {
           })
 
           flag.value = arr
+          resource_flag.used = true
         }
       }
     }
