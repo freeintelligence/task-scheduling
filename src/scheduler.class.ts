@@ -67,6 +67,10 @@ export class Scheduler {
     try {
       this.helper.reset()
 
+      if(inspector_command && inspector_command.value) {
+        inspector_command.used = true
+      }
+
       if(!commands.length && this.config.strict_mode_on_commands) {
         throw new CommandNotFoundError(inspector_command.value)
       }
@@ -177,6 +181,7 @@ export class Scheduler {
         }
 
         if(typeof resource_flag.value !== 'undefined') {
+          resource_flag.used = true
           arr.push(resource_flag.value)
         }
 
