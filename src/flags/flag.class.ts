@@ -33,13 +33,13 @@ export class Flag {
    */
   set value(value: any) {
     if(this.options.type == 'string') {
-      if(typeof value == 'boolean' || typeof value == 'number' || typeof value == 'string') value = value.toString();
+      if(typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number') value = value.toString();
       else if(typeof value == 'object') value = JSON.stringify(value);
       else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
     }
 
     else if(this.options.type == 'boolean') {
-      if(typeof value == 'boolean') value = value
+      if(typeof value == 'boolean') value = value;
       else if(typeof value == 'string' && (value.trim().toLowerCase() == 'false' || value.trim() == '0')) value = false;
       else if(typeof value == 'string' && (value.trim().toLowerCase() == 'true' || value.trim() == '1')) value = true;
       else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
@@ -51,8 +51,17 @@ export class Flag {
       else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
     }
 
-    else if(this.options.type == 'array') {
-
+    else if(this.options.type == 'object') {
+      if(typeof value == 'object') value = value;
+      else if(typeof value == 'string') {
+        try {
+          value = JSON.parse(value)
+        }
+        catch(err) {
+          throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
+        }
+      }
+      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
     }
 
     this.internal_value = value
