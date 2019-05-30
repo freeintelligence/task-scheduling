@@ -4,7 +4,8 @@
 export interface Resource {
   type?: 'command'|'extra'|'flag'|'flag-alias',
   name?: string,
-  value?: string
+  value?: string,
+  used?: boolean
 }
 
 /**

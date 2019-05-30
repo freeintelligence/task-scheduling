@@ -72,6 +72,9 @@ export class Scheduler {
       }
 
       for(let command_index in commands) {
+        inspector_extras.map(e => e.used = false)
+        inspector_flags.map(e => e.used = false)
+
         last_command = commands[command_index]
 
         console.log(inspector_flags)
@@ -131,11 +134,12 @@ export class Scheduler {
     for(let i = 0; i < to.length; i++) {
       const extra = to[i]
 
-      if(typeof extra.getDefault() == 'undefined' && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined')) {
+      if(typeof extra.getDefault() == 'undefined' && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined') && !from[i].used) {
         throw new MissingExtrasError(command, extra)
       }
 
       extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()
+      from[i].used = true
     }
   }
 
@@ -149,16 +153,21 @@ export class Scheduler {
       const flag = to[i]
 
       if(flag.options.type !== 'array') {
-        const resource = from.find(e => (e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
+        const resource = from.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
 
         if(!resource && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
           throw new RequiredFlagValueError(command, flag)
         }
 
         flag.value = resource && typeof resource.value !== 'undefined' ? resource.value : flag.getDefault()
+        resource.used = true
       }
       else {
-        console.log('values to array', values_to_array)
+        const resources = values_to_array.filter(e => !e.used)
+
+        if(!resources.length && flag.isRequired()) {
+          throw new RequiredFlagValueError(command, flag)
+        }
       }
     }
   }
