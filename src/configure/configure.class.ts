@@ -24,6 +24,7 @@ export class Configure implements Settings {
   private _strict_mode?: boolean
   private _strict_mode_on_commands?: boolean
   private _strict_mode_on_flags?: boolean
+  private _strict_mode_on_extras?: boolean
   private _global_help?: boolean
   private _description_help?: string
   private _exit_on_help?: boolean
@@ -44,6 +45,7 @@ export class Configure implements Settings {
     this.strict_mode = true
     this.strict_mode_on_commands = true
     this.strict_mode_on_flags = true
+    this.strict_mode_on_extras = true
     this.global_help = true
     this.exit_on_help = true
     this.show_flags_on_help = true
@@ -58,6 +60,7 @@ export class Configure implements Settings {
 
     this.strict_mode_on_commands = value
     this.strict_mode_on_flags = value
+    this.strict_mode_on_extras = value
   }
   get strict_mode() {
     return this._strict_mode
@@ -81,6 +84,16 @@ export class Configure implements Settings {
   }
   get strict_mode_on_flags() {
     return this._strict_mode_on_flags
+  }
+
+  /**
+   * Set and get strict mode on extras
+   */
+  set strict_mode_on_extras(value: boolean) {
+    this._strict_mode_on_extras = value
+  }
+  get strict_mode_on_extras() {
+    return this._strict_mode_on_extras
   }
 
   /**

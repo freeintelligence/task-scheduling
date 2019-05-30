@@ -83,6 +83,7 @@ export class Scheduler {
 
         this.setExtras(last_command, inspector_extras)
         this.setFlags(last_command, inspector_flags, inspector_extras)
+        this.setTemporalExtras(last_command, inspector_extras.filter(e => !e.used))
         this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
 
         result.push(await last_command.run({ }))
@@ -209,6 +210,15 @@ export class Scheduler {
         }
       }
     }
+  }
+
+  /**
+   * Try create temporal extras
+   */
+  private setTemporalExtras(command: BaseCommand, extras: Resource[]) {
+    extras.forEach(extra => {
+
+    })
   }
 
   /**
