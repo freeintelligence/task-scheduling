@@ -70,24 +70,24 @@ export class Flags {
   /**
    * Parse value
    */
-  public static parseValue(flag_name: string, value: any, to_type: string, to_subtype?: string) {
+  public static parseValue(flag: Flag, value: any, to_type: string, to_subtype?: string) {
     if(to_type == 'string') {
       if(typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number') value = value.toString();
       else if(typeof value == 'object') value = JSON.stringify(value);
-      else throw new InvalidFlagValueError(flag_name, to_type, typeof value);
+      else throw new InvalidFlagValueError(flag, to_type, typeof value);
     }
 
     else if(to_type == 'boolean') {
       if(typeof value == 'boolean') value = value;
       else if(typeof value == 'string' && (value.trim().toLowerCase() == 'false' || value.trim() == '0')) value = false;
       else if(typeof value == 'string' && (value.trim().toLowerCase() == 'true' || value.trim() == '1')) value = true;
-      else throw new InvalidFlagValueError(flag_name, to_type, typeof value);
+      else throw new InvalidFlagValueError(flag, to_type, typeof value);
     }
 
     else if(to_type == 'number') {
       if(typeof value == 'number') value = value;
       else if(typeof value == 'string' && value.length && !isNaN(Number(value))) value = Number(value);
-      else throw new InvalidFlagValueError(flag_name, to_type, typeof value);
+      else throw new InvalidFlagValueError(flag, to_type, typeof value);
     }
 
     else if(to_type == 'object') {
@@ -97,30 +97,30 @@ export class Flags {
           value = JSON.parse(value)
         }
         catch(err) {
-          throw new InvalidFlagValueError(flag_name, to_type, typeof value);
+          throw new InvalidFlagValueError(flag, to_type, typeof value);
         }
       }
-      else throw new InvalidFlagValueError(flag_name, to_type, typeof value);
+      else throw new InvalidFlagValueError(flag, to_type, typeof value);
     }
 
     else if(to_type == 'array') {
       let arr: any[] = []
 
       if(typeof value == 'string') {
-        arr.push(this.parseValue(flag_name, value, to_subtype))
+        arr.push(this.parseValue(flag, value, to_subtype))
       }
       else if(value instanceof Array) {
         for(let i in value) {
-          arr.push(this.parseValue(flag_name, value[i], to_subtype))
+          arr.push(this.parseValue(flag, value[i], to_subtype))
         }
       }
-      else throw new InvalidFlagValueError(flag_name, to_type, typeof value)
+      else throw new InvalidFlagValueError(flag, to_type, typeof value)
 
       value = arr
     }
 
     else {
-      throw new Error(`The data type "${to_type}" is invalid for the "${flag_name}" flag.`)
+      throw new Error(`The data type "${to_type}" is invalid for the "${flag.beautyName()}" flag.`)
     }
 
     return value

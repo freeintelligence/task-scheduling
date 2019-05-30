@@ -17,6 +17,7 @@ export class HelpTranslations {
   available_commands: string
   missing_extra: string
   required_flag_value: string
+  invalid_flag_value: string
 }
 
 /**
@@ -64,6 +65,7 @@ export class Helper {
       available_commands: 'Available commands',
       missing_extra: 'The "%s" command needs the "%s" argument.',
       required_flag_value: 'The "%s" flag is required.',
+      invalid_flag_value: 'The "%s" flag only accepts the data type %s (%s was received).',
     }
 
     return this
@@ -104,6 +106,13 @@ export class Helper {
    */
   public setErrorRequiredFlagValue(flag: string) {
     return this.setError(this.translations.required_flag_value, flag)
+  }
+
+  /**
+   * Set error message: invalid flag value
+   */
+  public setErrorInvalidFlagValue(flag: string, expected_type: string, received_type: string) {
+    return this.setError(this.translations.invalid_flag_value, flag, expected_type, received_type)
   }
 
   /*

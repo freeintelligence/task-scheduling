@@ -1,13 +1,15 @@
+import { Flag } from './../flags'
+
 /**
  * Invalid flag value
  */
 export class InvalidFlagValueError extends Error {
 
-  flag: string
+  flag: Flag
   expected: string
   received: string
 
-  constructor(flag: string, expected: string, received: string) {
+  constructor(flag: Flag, expected: string, received: string) {
     super()
 
     this.flag = flag

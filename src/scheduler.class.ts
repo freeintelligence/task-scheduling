@@ -5,7 +5,7 @@ import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags, Flag } from './flags'
 import { Middletasks } from './middletasks'
-import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError } from './errors'
+import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError } from './errors'
 
 /**
  * Scheduler
@@ -62,6 +62,8 @@ export class Scheduler {
     const global_flags = this.flags.getAll()
     const global_commands = this.commands.getAll()
 
+    let last_command: BaseCommand
+
     try {
       this.helper.reset()
 
@@ -70,13 +72,13 @@ export class Scheduler {
       }
 
       for(let command_index in commands) {
-        const command = commands[command_index]
+        last_command = commands[command_index]
 
         console.log(inspector_flags)
-        this.setExtras(command, inspector_extras)
-        this.setFlags(command, inspector_flags)
+        this.setExtras(last_command, inspector_extras)
+        this.setFlags(last_command, inspector_flags)
 
-        result.push(await command.run({ }))
+        result.push(await last_command.run({ }))
       }
 
       return result
@@ -94,6 +96,16 @@ export class Scheduler {
         }
         else {
           this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help)
+        }
+
+        err.stack = this.helper.generate().getMessage()
+      }
+      else if(err instanceof InvalidFlagValueError) {
+        if(last_command.getMainName().length) {
+          this.helper.setErrorInvalidFlagValue(err.flag.beautyName(), err.expected, err.received).setHeader(last_command.getCompleteName()).setFlags(global_flags.concat(last_command.getFlagsLikeArray()))
+        }
+        else {
+          this.helper.setErrorInvalidFlagValue(err.flag.beautyName(), err.expected, err.received).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help)
         }
 
         err.stack = this.helper.generate().getMessage()
