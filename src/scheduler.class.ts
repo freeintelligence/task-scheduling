@@ -76,7 +76,7 @@ export class Scheduler {
 
         console.log(inspector_flags)
         this.setExtras(last_command, inspector_extras)
-        this.setFlags(last_command, inspector_flags)
+        this.setFlags(last_command, inspector_flags, inspector_extras)
 
         result.push(await last_command.run({ }))
       }
@@ -142,18 +142,24 @@ export class Scheduler {
   /**
    * Set flags values
    */
-  private setFlags(command: BaseCommand, from: Resource[]) {
+  private setFlags(command: BaseCommand, from: Resource[], values_to_array: Resource[]) {
     const to: Flag[] = command.getFlagsLikeArray()
 
     for(let i = 0; i < to.length; i++) {
       const flag = to[i]
-      const resource = from.find(e => (e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
 
-      if(!resource && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
-        throw new RequiredFlagValueError(command, flag)
+      if(flag.options.type !== 'array') {
+        const resource = from.find(e => (e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
+
+        if(!resource && typeof flag.getDefault() == 'undefined' && this.config.strict_mode_on_flags) {
+          throw new RequiredFlagValueError(command, flag)
+        }
+
+        flag.value = resource && typeof resource.value !== 'undefined' ? resource.value : flag.getDefault()
       }
-
-      flag.value = resource && typeof resource.value !== 'undefined' ? resource.value : flag.getDefault()
+      else {
+        console.log('values to array', values_to_array)
+      }
     }
   }
 

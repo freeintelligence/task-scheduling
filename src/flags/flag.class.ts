@@ -19,9 +19,13 @@ export class Flag {
   /**
    * Instance data
    */
-  protected name: string | string[]
-  protected options: OptionsFlag
-  protected internal_value: any
+  public name: string | string[]
+  public options: OptionsFlag
+
+  /**
+   *
+   */
+  private internal_value: any
 
   constructor(name: string, options: OptionsFlag) {
     this.name = name
