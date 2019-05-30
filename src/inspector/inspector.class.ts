@@ -3,9 +3,9 @@
  */
 export interface Resource {
   index: number,
-  type?: 'command'|'extra'|'flag'|'flag-alias',
+  type: 'command'|'extra'|'flag'|'flag-alias',
   name?: string,
-  value?: string,
+  value: string,
   used?: boolean,
 }
 
@@ -122,7 +122,7 @@ export class Inspector {
    * Get command
    */
   public getCommand() {
-    return this.resources.find(e => e.type == 'command') || { }
+    return this.resources.find(e => e.type == 'command') || { type: 'command', index: 0, value: undefined }
   }
 
   /**
