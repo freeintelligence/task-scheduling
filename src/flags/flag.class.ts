@@ -6,7 +6,7 @@ import { InvalidFlagValueError } from './../errors'
 interface OptionsFlag {
   alias?: string | string[],
   description?: string,
-  type?: 'string'|'boolean'|'number'|'array'|'object',
+  type: 'string'|'boolean'|'number'|'array'|'object',
   subtype?: 'string'|'boolean'|'number'|'object', // no 'array'
   default?: any,
 }
@@ -20,12 +20,12 @@ export class Flag {
    * Instance data
    */
   protected name: string | string[]
-  protected options: OptionsFlag = { }
+  protected options: OptionsFlag
   protected internal_value: any
 
-  constructor(name: string, options: OptionsFlag = { }) {
+  constructor(name: string, options: OptionsFlag) {
     this.name = name
-    this.options = options || { }
+    this.options = options || { type: 'string' }
   }
 
   /**
@@ -43,6 +43,16 @@ export class Flag {
       else if(typeof value == 'string' && (value.trim().toLowerCase() == 'false' || value.trim() == '0')) value = false;
       else if(typeof value == 'string' && (value.trim().toLowerCase() == 'true' || value.trim() == '1')) value = true;
       else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
+    }
+
+    else if(this.options.type == 'number') {
+      if(typeof value == 'number') value = value;
+      else if(typeof value == 'string' && value.length && !isNaN(Number(value))) value = Number(value);
+      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
+    }
+
+    else if(this.options.type == 'array') {
+
     }
 
     this.internal_value = value
