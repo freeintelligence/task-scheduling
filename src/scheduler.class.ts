@@ -5,7 +5,7 @@ import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags, Flag } from './flags'
 import { Middletasks } from './middletasks'
-import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError, UnknownExtraError } from './errors'
+import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError, UnknownExtraError, CustomError } from './errors'
 
 /**
  * Scheduler
@@ -126,6 +126,9 @@ export class Scheduler {
       }
       else if(err instanceof UnknownExtraError) {
         err.stack = this.helper.setErrorUnknownExtra(err.extra).setHeader(last_command.getCompleteName()).setFlags(global_flags.concat(last_command.getFlagsLikeArray())).generate().getMessage()
+      }
+      else if(err instanceof CustomError) {
+        err.stack = this.helper.setError(err.message).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
       }
 
       await this.config.catch(err)
