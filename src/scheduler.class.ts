@@ -5,7 +5,7 @@ import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags, Flag } from './flags'
 import { Middletasks } from './middletasks'
-import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError } from './errors'
+import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError } from './errors'
 
 /**
  * Scheduler
@@ -76,13 +76,14 @@ export class Scheduler {
       }
 
       for(let command_index in commands) {
+        last_command = commands[command_index]
+
         inspector_extras.map(e => e.used = false)
         inspector_flags.map(e => e.used = false)
 
-        last_command = commands[command_index]
-
         this.setExtras(last_command, inspector_extras)
         this.setFlags(last_command, inspector_flags, inspector_extras)
+        this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
 
         result.push(await last_command.run({ }))
       }
@@ -115,6 +116,9 @@ export class Scheduler {
         }
 
         err.stack = this.helper.generate().getMessage()
+      }
+      else if(err instanceof UnknownFlagError) {
+        err.stack = this.helper.setErrorUnknownFlag(err.flag).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
       }
 
       await this.config.catch(err)
@@ -193,6 +197,17 @@ export class Scheduler {
         flag.value = arr
       }
     }
+  }
+
+  /**
+   * Try create temporal flags
+   */
+  private setTemporalFlags(command: BaseCommand, flags: Resource[]) {
+    flags.forEach(flag => {
+      if(this.config.strict_mode_on_flags) throw new UnknownFlagError(flag.name);
+
+      flag.used = true
+    })
   }
 
   /**
