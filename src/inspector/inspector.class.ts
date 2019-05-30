@@ -108,7 +108,7 @@ export class Inspector {
 
         this.resources.push({ index: i, type: type, name: name, value: value })
 
-        if(!Inspector.isFlag(next)) {
+        if(!Inspector.isFlag(next) && !Inspector.isFlagWithValue(task)) {
           i++
         }
       }
