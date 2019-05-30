@@ -8,8 +8,8 @@ export class Extra {
   /**
    * Data
    */
-  private name: string
-  private options: ExtraOptions
+  protected name: string
+  public options: ExtraOptions
   public value: string
 
   /**
@@ -19,6 +19,13 @@ export class Extra {
     this.options = options || { }
     this.options.default = typeof this.options.default != 'undefined' ? this.options.default : undefined
     this.name = name
+  }
+
+  /**
+   * Get name
+   */
+  public getName(): string {
+    return this.name
   }
 
   /**

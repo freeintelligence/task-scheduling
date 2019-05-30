@@ -190,6 +190,33 @@ export class BaseCommand {
   }
 
   /**
+   * Add temporal extra
+   */
+  public addTemporalExtra(extra: Extra) {
+    extra.options.temporal = true
+
+    if(!this.extras) {
+      this.extras = { }
+    }
+    if(this.extras instanceof Object) {
+      this.extras[extra.getName()] = extra
+    }
+  }
+
+  /**
+   * Remove temporal extras
+   */
+  public removeTemporalExtras() {
+    if(this.extras instanceof Object) {
+      for(let i in this.extras) {
+        if(this.extras[i].options.temporal) {
+          delete this.extras[i]
+        }
+      }
+    }
+  }
+
+  /**
    * Fix instance
    */
   public fix() {

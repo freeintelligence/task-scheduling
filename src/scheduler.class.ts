@@ -5,7 +5,7 @@ import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags, Flag } from './flags'
 import { Middletasks } from './middletasks'
-import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError } from './errors'
+import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError, UnknownExtraError } from './errors'
 
 /**
  * Scheduler
@@ -88,6 +88,7 @@ export class Scheduler {
 
         result.push(await last_command.run({ }))
 
+        last_command.removeTemporalExtras()
         last_command.removeTemporalFlags()
       }
 
@@ -217,7 +218,13 @@ export class Scheduler {
    */
   private setTemporalExtras(command: BaseCommand, extras: Resource[]) {
     extras.forEach(extra => {
+      if(this.config.strict_mode_on_extras) throw new UnknownExtraError(extra.value);
 
+      const instance = new Extra(new Date().getTime().toString(), { default: extra.value })
+      command.addTemporalExtra(instance)
+
+      instance.value = extra.value
+      extra.used = true
     })
   }
 
