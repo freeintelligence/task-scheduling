@@ -179,24 +179,33 @@ export class Scheduler {
       }
       else {
         const resource_flag = from.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
-        const resource_values = values_to_array.filter(e => !e.used && e.index >= resource_flag.index)
-        const arr: any[] = []
 
-        if(!resource_values.length && flag.isRequired()) {
+        if(!resource_flag && flag.isRequired()) {
           throw new RequiredFlagValueError(command, flag)
         }
-
-        if(typeof resource_flag.value !== 'undefined') {
-          resource_flag.used = true
-          arr.push(resource_flag.value)
+        else if(!resource_flag && !flag.isRequired()) {
+          flag.value = flag.getDefault()
         }
+        else {
+          const resource_values = values_to_array.filter(e => !e.used && e.index >= resource_flag.index)
+          const arr: any[] = []
 
-        resource_values.forEach(resource => {
-          arr.push(resource.value)
-          resource.used = true
-        })
+          if(!resource_values.length && flag.isRequired()) {
+            throw new RequiredFlagValueError(command, flag)
+          }
 
-        flag.value = arr
+          if(typeof resource_flag.value !== 'undefined' && typeof resource_flag.value != 'string' || (typeof resource_flag.value == 'string' && resource_flag.value.length)) {
+            resource_flag.used = true
+            arr.push(resource_flag.value)
+          }
+
+          resource_values.forEach(resource => {
+            arr.push(resource.value)
+            resource.used = true
+          })
+
+          flag.value = arr
+        }
       }
     }
   }
