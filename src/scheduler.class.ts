@@ -86,6 +86,8 @@ export class Scheduler {
         this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
 
         result.push(await last_command.run({ }))
+
+        last_command.removeTemporalFlags()
       }
 
       return result
@@ -206,6 +208,10 @@ export class Scheduler {
     flags.forEach(flag => {
       if(this.config.strict_mode_on_flags) throw new UnknownFlagError(flag.name);
 
+      const instance = new Flag(flag.name, { default: flag.value, type: 'string', temporal: true })
+      command.addTemporalFlag(instance)
+
+      instance.value = flag.value
       flag.used = true
     })
   }

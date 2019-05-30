@@ -152,6 +152,44 @@ export class BaseCommand {
   }
 
   /**
+   * Add temporal flag
+   */
+  public addTemporalFlag(flag: Flag) {
+    flag.options.temporal = true
+
+    if(this.flags instanceof Array) {
+      this.flags.push(flag)
+    }
+    else if(this.flags instanceof Object) {
+      this.flags[flag.getFirstName()] = flag
+    }
+    else {
+      this.flags = { }
+
+      this.flags[flag.getFirstName()] = flag
+    }
+  }
+
+  /**
+   * Remove temporal flags
+   */
+  public removeTemporalFlags() {
+    if(this.flags instanceof Array) {
+      this.flags = this.flags.filter(e => !e.options.temporal)
+    }
+    else if(this.flags instanceof Object) {
+      for(let i in this.flags) {
+        if(this.flags[i].options.temporal) {
+          delete this.flags[i]
+        }
+      }
+    }
+    else {
+      this.flags = { }
+    }
+  }
+
+  /**
    * Fix instance
    */
   public fix() {

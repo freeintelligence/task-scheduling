@@ -9,6 +9,7 @@ interface OptionsFlag {
   type: 'string'|'boolean'|'number'|'array'|'object',
   subtype?: 'string'|'boolean'|'number'|'object', // no 'array'
   default?: any,
+  temporal?: boolean,
 }
 
 /*
