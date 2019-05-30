@@ -1,4 +1,4 @@
-import { InvalidFlagValueError } from './../errors'
+import { Flags } from './flags.class'
 
 /*
  * Options
@@ -25,46 +25,14 @@ export class Flag {
 
   constructor(name: string, options: OptionsFlag) {
     this.name = name
-    this.options = options || { type: 'string' }
+    this.options = options || { type: 'string', subtype: 'string' }
   }
 
   /**
    * Set value
    */
   set value(value: any) {
-    if(this.options.type == 'string') {
-      if(typeof value == 'string' || typeof value == 'boolean' || typeof value == 'number') value = value.toString();
-      else if(typeof value == 'object') value = JSON.stringify(value);
-      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
-    }
-
-    else if(this.options.type == 'boolean') {
-      if(typeof value == 'boolean') value = value;
-      else if(typeof value == 'string' && (value.trim().toLowerCase() == 'false' || value.trim() == '0')) value = false;
-      else if(typeof value == 'string' && (value.trim().toLowerCase() == 'true' || value.trim() == '1')) value = true;
-      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
-    }
-
-    else if(this.options.type == 'number') {
-      if(typeof value == 'number') value = value;
-      else if(typeof value == 'string' && value.length && !isNaN(Number(value))) value = Number(value);
-      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
-    }
-
-    else if(this.options.type == 'object') {
-      if(typeof value == 'object') value = value;
-      else if(typeof value == 'string') {
-        try {
-          value = JSON.parse(value)
-        }
-        catch(err) {
-          throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
-        }
-      }
-      else throw new InvalidFlagValueError(this.getFirstName(), this.options.type, typeof value);
-    }
-
-    this.internal_value = value
+    this.internal_value = Flags.parseValue(this.getFirstName(), value, this.options.type, this.options.subtype)
   }
 
   /**
