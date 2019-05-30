@@ -124,6 +124,9 @@ export class Scheduler {
       else if(err instanceof UnknownFlagError) {
         err.stack = this.helper.setErrorUnknownFlag(err.flag).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
       }
+      else if(err instanceof UnknownExtraError) {
+        err.stack = this.helper.setErrorUnknownExtra(err.extra).setHeader(last_command.getCompleteName()).setFlags(global_flags.concat(last_command.getFlagsLikeArray())).generate().getMessage()
+      }
 
       await this.config.catch(err)
     }
@@ -220,7 +223,7 @@ export class Scheduler {
     extras.forEach(extra => {
       if(this.config.strict_mode_on_extras) throw new UnknownExtraError(extra.value);
 
-      const instance = new Extra(new Date().getTime().toString(), { default: extra.value })
+      const instance = new Extra('temporal-extra-'+new Date().getTime().toString(), { default: extra.value })
       command.addTemporalExtra(instance)
 
       instance.value = extra.value
