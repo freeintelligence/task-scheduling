@@ -56,8 +56,8 @@ export class Configure implements Settings {
   set strict_mode(value: boolean) {
     this._strict_mode = value
 
-    this.strict_mode_on_commands = true
-    this.strict_mode_on_flags = true
+    this.strict_mode_on_commands = value
+    this.strict_mode_on_flags = value
   }
   get strict_mode() {
     return this._strict_mode
