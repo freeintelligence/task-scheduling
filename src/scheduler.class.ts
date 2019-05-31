@@ -81,10 +81,11 @@ export class Scheduler {
         inspector_extras.map(e => e.used = false)
         inspector_flags.map(e => e.used = false)
 
-        this.setExtras(last_command, inspector_extras)
-        this.setFlags(last_command, global_flags, inspector_flags, inspector_extras)
+        this.setCommandExtras(last_command, inspector_extras)
+        this.setFlagsValues(last_command, global_flags, inspector_flags, inspector_extras)
         this.setTemporalExtras(last_command, inspector_extras.filter(e => !e.used))
         this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
+        this.setGlobalFlagsToCommand(last_command, global_flags)
 
         result.push(await last_command.run({ }))
 
@@ -143,9 +144,9 @@ export class Scheduler {
   }
 
   /**
-   * Set extras values
+   * Set command extras values
    */
-  private setExtras(command: BaseCommand, from: Resource[]) {
+  private setCommandExtras(command: BaseCommand, from: Resource[]) {
     const to: Extra[] = command.getExtrasLikeArray()
 
     for(let i = 0; i < to.length; i++) {
@@ -164,9 +165,9 @@ export class Scheduler {
   }
 
   /**
-   * Set flags values
+   * Set flags (command and global flags) values
    */
-  private setFlags(command: BaseCommand, global_flags: Flag[], from: Resource[], values_to_array: Resource[]) {
+  private setFlagsValues(command: BaseCommand, global_flags: Flag[], from: Resource[], values_to_array: Resource[]) {
     const to: Flag[] = command.getFlagsLikeArray().concat(global_flags)
 
     for(let i = 0; i < to.length; i++) {
@@ -246,6 +247,18 @@ export class Scheduler {
 
       instance.value = flag.value
       flag.used = true
+    })
+  }
+
+  /**
+   *
+   */
+  private setGlobalFlagsToCommand(command: BaseCommand, flags: Flag[]) {
+    flags.forEach(flag => {
+      const instance = new Flag(flag.getAllNames(), { default: flag.value, type: flag.options.type, subtype: flag.options.subtype, description: flag.getDescription(), temporal: true })
+      command.addTemporalFlag(instance)
+
+      instance.value = flag.value
     })
   }
 

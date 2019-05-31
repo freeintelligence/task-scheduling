@@ -28,7 +28,7 @@ export class Flag {
    */
   private internal_value: any
 
-  constructor(name: string, options: OptionsFlag) {
+  constructor(name: string|string[], options: OptionsFlag) {
     this.name = name
     this.options = options || { type: 'string', subtype: 'string' }
   }
