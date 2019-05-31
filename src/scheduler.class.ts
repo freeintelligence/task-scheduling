@@ -152,13 +152,13 @@ export class Scheduler {
     for(let i = 0; i < to.length; i++) {
       const extra = to[i]
 
-      if(typeof extra.getDefault() == 'undefined' && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined') && !from[i].used) {
+      if(extra.isRequired() && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined')) {
         throw new MissingExtrasError(command, extra)
       }
 
       extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()
 
-      if(from) {
+      if(from[i]) {
         from[i].used = true
       }
     }
