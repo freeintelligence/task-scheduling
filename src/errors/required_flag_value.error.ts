@@ -1,10 +1,11 @@
+import { BaseError } from './base.error'
 import { BaseCommand } from './../commands'
 import { Flag } from './../flags'
 
 /**
  * Required flag value
  */
-export class RequiredFlagValueError extends Error {
+export class RequiredFlagValueError extends BaseError {
 
   public command: BaseCommand
   public flag: Flag

@@ -1,7 +1,9 @@
+import { BaseError } from './base.error'
+
 /**
  * Unknown flag
  */
-export class UnknownFlagError extends Error {
+export class UnknownFlagError extends BaseError {
 
   public flag: string
 

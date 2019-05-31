@@ -1,9 +1,10 @@
+import { BaseError } from './base.error'
 import { Flag } from './../flags'
 
 /**
  * Invalid flag value
  */
-export class InvalidFlagValueError extends Error {
+export class InvalidFlagValueError extends BaseError {
 
   flag: Flag
   expected: string

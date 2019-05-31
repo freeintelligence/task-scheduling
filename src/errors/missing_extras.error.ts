@@ -1,10 +1,11 @@
+import { BaseError } from './base.error'
 import { BaseCommand } from './../commands'
 import { Extra } from './../extras'
 
 /**
  * Missing extras
  */
-export class MissingExtrasError extends Error {
+export class MissingExtrasError extends BaseError {
 
   public command: BaseCommand
   public extra: Extra

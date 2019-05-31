@@ -1,7 +1,9 @@
+import { BaseError } from './base.error'
+
 /**
  * Command not found
  */
-export class CommandNotFoundError extends Error {
+export class CommandNotFoundError extends BaseError {
 
   public command_name: string
 
