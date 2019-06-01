@@ -87,7 +87,7 @@ export class Scheduler {
         this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
         this.setGlobalFlagsToCommand(last_command, global_flags)
 
-        result.push(await last_command.run({ }))
+        result.push(await last_command.run({ flags: last_command.getFlagsLikeObject() }))
 
         last_command.removeTemporalExtras()
         last_command.removeTemporalFlags()
