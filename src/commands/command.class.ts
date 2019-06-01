@@ -1,3 +1,4 @@
+import { BaseMiddletask } from './../middletasks'
 import { Extra, Extras } from './../extras'
 import { Flag } from './../flags'
 
@@ -11,6 +12,7 @@ export class BaseCommand {
    */
   protected name?: string | string[]
   protected description?: string
+  protected middletasks?: BaseMiddletask[]
   protected flags?: { [key: string]: Flag } | Flag[]
   protected extras?: { [key: string]: Extra }
 
