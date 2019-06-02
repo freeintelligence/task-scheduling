@@ -79,7 +79,7 @@ export class Scheduler {
       for(let command_index in commands) {
         last_command = commands[command_index]
 
-        const middletasks: BaseMiddletask[] = last_command.getMiddletasksLikeArray()
+        const middletasks = last_command.getMiddletasksLikeArray()
 
         inspector_extras.map(e => e.used = false)
         inspector_flags.map(e => e.used = false)
@@ -92,7 +92,7 @@ export class Scheduler {
 
         for(let i in middletasks) {
           const middletask = middletasks[i]
-          const constructor = typeof middletask == 'string' ? this.middletasks : middletask
+          const constructor = typeof middletask == 'string' ? this.middletasks.getByName(middletask) : middletask
         }
 
         result.push(await last_command.run({ flags: last_command.getFlagsLikeObject() }))
