@@ -92,7 +92,11 @@ export class Scheduler {
 
         for(let i in middletasks) {
           const middletask = middletasks[i]
-          const constructor = typeof middletask == 'string' ? this.middletasks.getByName(middletask) : middletask
+          const constructor: BaseMiddletask = typeof middletask == 'string' ? this.middletasks.getByName(middletask) : middletask
+
+          const instance = typeof constructor == 'function' ? new (constructor as any) : constructor
+
+          await instance.handle()
         }
 
         result.push(await last_command.run({ flags: last_command.getFlagsLikeObject() }))
