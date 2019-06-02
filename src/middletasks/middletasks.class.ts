@@ -5,7 +5,7 @@ import { BaseMiddletask } from './middletask.class'
  */
 interface MiddletaskData {
   name: string|null,
-  constructor: typeof BaseMiddletask
+  constructor: BaseMiddletask
 }
 
 /**
@@ -35,7 +35,7 @@ export class Middletasks {
   /**
    * Register middletask
    */
-  public push(name: string|null, constructor: typeof BaseMiddletask) {
+  public push(name: string|null, constructor: BaseMiddletask) {
     this.container_middletasks.push({ name: name, constructor: constructor })
     return this
   }
@@ -50,7 +50,7 @@ export class Middletasks {
   /**
    * Get middletask by name
    */
-  public getByName(name: string): typeof BaseMiddletask {
+  public getByName(name: string): BaseMiddletask {
     const result = this.getAll().find(e => e.name == name)
 
     return result ? result.constructor : null

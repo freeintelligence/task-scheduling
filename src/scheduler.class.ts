@@ -95,8 +95,7 @@ export class Scheduler {
           const middletask = middletasks[i]
           const constructor: BaseMiddletask = typeof middletask == 'string' ? this.middletasks.getByName(middletask) : middletask
 
-          const instance = typeof constructor == 'function' ? new (constructor as any) : constructor
-
+          const instance = typeof constructor == 'function' ? new (constructor as typeof BaseMiddletask) : constructor
           const data = await instance.handle()
 
           if(typeof data !== 'undefined') {
