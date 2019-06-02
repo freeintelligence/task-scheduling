@@ -79,7 +79,8 @@ export class Scheduler {
       for(let command_index in commands) {
         last_command = commands[command_index]
 
-        const middletasks = last_command.getMiddletasksLikeArray()
+        let middletasks = last_command.getMiddletasksLikeArray()
+        let skip_command = false
 
         inspector_extras.map(e => e.used = false)
         inspector_flags.map(e => e.used = false)
@@ -96,10 +97,16 @@ export class Scheduler {
 
           const instance = typeof constructor == 'function' ? new (constructor as any) : constructor
 
-          await instance.handle()
+          const data = await instance.handle()
+
+          if(typeof data !== 'undefined') {
+            skip_command = true
+          }
         }
 
-        result.push(await last_command.run({ flags: last_command.getFlagsLikeObject() }))
+        if(!skip_command) {
+          result.push(await last_command.run({ flags: last_command.getFlagsLikeObject() }))
+        }
 
         last_command.removeTemporalExtras()
         last_command.removeTemporalFlags()
