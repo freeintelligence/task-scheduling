@@ -95,7 +95,7 @@ export class Scheduler {
 
         for(let i in command_middletasks) {
           const middletask = command_middletasks[i]
-          const instance = new middletask(inspector, null, null)
+          const instance = new middletask(inspector, last_command, null)
           const data = await instance.handle()
 
           if(typeof data !== 'undefined') {
