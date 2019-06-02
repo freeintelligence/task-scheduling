@@ -4,7 +4,7 @@ import { Inspector, Resource } from './inspector'
 import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags, Flag } from './flags'
-import { Middletasks } from './middletasks'
+import { Middletasks, BaseMiddletask } from './middletasks'
 import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError, UnknownExtraError, CustomError } from './errors'
 
 /**
@@ -38,6 +38,7 @@ export class Scheduler {
     this.tasks = _tasks ? _tasks : this.processArgv()
     this.inspector = new Inspector(_tasks)
     this.commands = new Commands()
+    this.middletasks = new Middletasks()
     this.flags = new Flags()
     this.config = new Configure(this.flags)
     this.helper = new Helper()
@@ -78,6 +79,8 @@ export class Scheduler {
       for(let command_index in commands) {
         last_command = commands[command_index]
 
+        const middletasks: BaseMiddletask[] = last_command.getMiddletasksLikeArray()
+
         inspector_extras.map(e => e.used = false)
         inspector_flags.map(e => e.used = false)
 
@@ -86,6 +89,11 @@ export class Scheduler {
         this.setTemporalExtras(last_command, inspector_extras.filter(e => !e.used))
         this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
         this.setGlobalFlagsToCommand(last_command, global_flags)
+
+        for(let i in middletasks) {
+          const middletask = middletasks[i]
+          const constructor = typeof middletask == 'string' ? this.middletasks : middletask
+        }
 
         result.push(await last_command.run({ flags: last_command.getFlagsLikeObject() }))
 

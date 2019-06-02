@@ -12,7 +12,7 @@ export class BaseCommand {
    */
   protected name?: string | string[]
   protected description?: string
-  protected middletasks?: BaseMiddletask[]
+  protected middletasks?: (typeof BaseMiddletask|string)[]
   protected flags?: { [key: string]: Flag } | Flag[]
   protected extras?: { [key: string]: Extra }
 
@@ -151,6 +151,13 @@ export class BaseCommand {
    */
   public getExtrasLikeArray(): Extra[] {
     return Object.values(this.getExtrasLikeObject())
+  }
+
+  /**
+   * Get middletasks like object
+   */
+  public getMiddletasksLikeArray(): (typeof BaseMiddletask|string)[] {
+    return this.middletasks instanceof Array ? this.middletasks : []
   }
 
   /**
