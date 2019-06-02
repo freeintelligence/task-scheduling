@@ -8,7 +8,7 @@ export class Middletasks {
   /**
    * Data
    */
-  private container_middletasks: BaseMiddletask[] = []
+  private container_middletasks: typeof BaseMiddletask[] = []
 
   /**
    * Constructor
@@ -27,7 +27,7 @@ export class Middletasks {
   /**
    * Register middletask
    */
-  public push(constructor: BaseMiddletask) {
+  public push(constructor: typeof BaseMiddletask) {
     this.container_middletasks.push(constructor)
     return this
   }

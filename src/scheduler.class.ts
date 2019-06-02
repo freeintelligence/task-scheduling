@@ -81,6 +81,7 @@ export class Scheduler {
 
         let global_middletasks = this.middletasks.getAll()
         let command_middletasks = last_command.getMiddletasksLikeArray()
+        let all_middletasks = global_middletasks.concat(command_middletasks)
         let skip_command = false
 
         inspector_extras.map(e => e.used = false)
