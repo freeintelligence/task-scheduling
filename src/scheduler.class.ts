@@ -79,7 +79,8 @@ export class Scheduler {
       for(let command_index in commands) {
         last_command = commands[command_index]
 
-        let middletasks = last_command.getMiddletasksLikeArray()
+        let global_middletasks = this.middletasks.getAll()
+        let command_middletasks = last_command.getMiddletasksLikeArray()
         let skip_command = false
 
         inspector_extras.map(e => e.used = false)
@@ -91,13 +92,14 @@ export class Scheduler {
         this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
         this.setGlobalFlagsToCommand(last_command, global_flags)
 
-        for(let i in middletasks) {
-          const middletask = middletasks[i]
-          const instance = new middletask()
+        for(let i in command_middletasks) {
+          const middletask = command_middletasks[i]
+          const instance = new middletask(inspector, null, null)
           const data = await instance.handle()
 
           if(typeof data !== 'undefined') {
             skip_command = true
+            break
           }
         }
 
