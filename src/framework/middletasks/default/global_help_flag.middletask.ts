@@ -1,5 +1,5 @@
+import { Scheduler } from './../../scheduler.class'
 import { BaseMiddletask } from './../../middletasks'
-import { Inspector } from './../../inspector'
 import { BaseCommand } from './../../commands'
 import { Flag } from './../../flags'
 
@@ -8,24 +8,29 @@ import { Flag } from './../../flags'
  */
 export class GlobalHelpFlagMiddletask extends BaseMiddletask {
 
-  /**
-   * Constructor
-   */
-  constructor(
-    protected inspector: Inspector,
-    protected command: BaseCommand,
-    protected flags: { [key: string]: Flag }
-  ) {
-    super(inspector, command, flags)
-  }
+  protected scheduler: Scheduler
+  protected command: BaseCommand
+  protected flags: { [name: string]: Flag }
 
   /**
    * Handle method
    */
   async handle() {
-    if(this.flags.help.value) {
-      return false
+    if(!this.flags.help.value) return true;
+
+    this.scheduler.helper.reset()
+
+    if(this.command && this.command.getMainName() && this.command.getMainName().length) {
+      this.scheduler.helper.setHeader(this.command.getCompleteName())
+      this.scheduler.helper.setFlags(this.command.getFlagsLikeArray())
     }
+    else {
+      this.scheduler.helper.setHeaderDefault()
+      this.scheduler.helper.setCommands(this.scheduler.commands.getAll())
+      this.scheduler.helper.setFlags(this.scheduler.flags.getAll())
+    }
+
+    return this.scheduler.helper.generate().print(), false
   }
 
 }
