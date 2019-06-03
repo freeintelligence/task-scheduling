@@ -243,11 +243,4 @@ export class Helper {
     return this.messages.generated
   }
 
-  /*
-   * Is null or undefined
-   * */
-  private static nullOrUndefined(value: any): boolean {
-    return value == null || typeof value == 'undefined'
-  }
-
 }

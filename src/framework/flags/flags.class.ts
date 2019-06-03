@@ -1,4 +1,3 @@
-import { Scheduler } from './../scheduler.class'
 import { Flag } from './../flags'
 import { InvalidFlagValueError } from './../errors'
 
