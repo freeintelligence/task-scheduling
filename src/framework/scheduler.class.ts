@@ -88,6 +88,7 @@ export class Scheduler {
         let global_middletasks = this.middletasks.getAll()
         let command_middletasks = command.getMiddletasksLikeArray()
         let all_middletasks = global_middletasks.concat(command_middletasks)
+        let all_middletasks_instances: BaseMiddletask[] = []
         let skip_command = false
 
         this.setCommandExtras(command, inspector_extras)
@@ -100,6 +101,8 @@ export class Scheduler {
           const instance = new middletask(this, command, this.flags.getAllLikeObject(), inspector)
           const response = typeof instance.handle == 'function' ? await instance.handle() : true
 
+          all_middletasks_instances.push(instance)
+
           if(response === false) {
             skip_command = true
             break
@@ -108,6 +111,12 @@ export class Scheduler {
 
         if(!skip_command) {
           result.push(await command.run({ flags: command.getFlagsLikeObject() }))
+
+          for(let instance of all_middletasks_instances) {
+            if(typeof instance.terminate == 'function') {
+              await instance.terminate()
+            }
+          }
         }
 
         command.removeTemporalExtras()
