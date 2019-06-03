@@ -1,0 +1,9 @@
+{
+  "autoloadPackageModules": true,
+  "selfLoadingModules": [],
+  "language": "ts",
+  "architecture": "free",
+  "packageManager": "npm",
+  "compiler": true,
+  "watcher": true
+}
