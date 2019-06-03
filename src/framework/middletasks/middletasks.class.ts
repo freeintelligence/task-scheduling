@@ -1,4 +1,5 @@
 import { BaseMiddletask } from './middletask.class'
+import { GlobalHelpFlagMiddletask } from './default'
 
 /**
  * Middletasks instance
@@ -14,6 +15,7 @@ export class Middletasks {
    * Constructor
    */
   constructor() {
+    this.reset()
   }
 
   /**
@@ -21,6 +23,14 @@ export class Middletasks {
    */
   public reset() {
     this.container_middletasks = []
+    return this.pushDefaults()
+  }
+
+  /**
+   * Push default middletasks
+   */
+  private pushDefaults() {
+    this.push(GlobalHelpFlagMiddletask)
     return this
   }
 

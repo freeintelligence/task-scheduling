@@ -1,9 +1,12 @@
-import { BaseMiddletask, Inspector, BaseCommand, Flag } from './../../framework'
+import { BaseMiddletask } from './../../middletasks'
+import { Inspector } from './../../inspector'
+import { BaseCommand } from './../../commands'
+import { Flag } from './../../flags'
 
 /**
  * Global help flag
  */
-export class GlobalHelpFlag extends BaseMiddletask {
+export class GlobalHelpFlagMiddletask extends BaseMiddletask {
 
   /**
    * Constructor
@@ -21,7 +24,7 @@ export class GlobalHelpFlag extends BaseMiddletask {
    */
   async handle() {
     if(this.flags.help.value) {
-      
+      return false
     }
   }
 

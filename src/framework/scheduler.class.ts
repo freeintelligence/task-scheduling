@@ -78,7 +78,7 @@ export class Scheduler {
 
       for(let command of commands) {
         last_command = command
-        
+
         let global_middletasks = this.middletasks.getAll()
         let command_middletasks = command.getMiddletasksLikeArray()
         let all_middletasks = global_middletasks.concat(command_middletasks)
@@ -93,12 +93,11 @@ export class Scheduler {
         this.setTemporalFlags(command, inspector_flags.filter(e => !e.used))
         this.setGlobalFlagsToCommand(command, global_flags)
 
-        for(let i in command_middletasks) {
-          const middletask = command_middletasks[i]
+        for(let middletask of all_middletasks) {
           const instance = new middletask(inspector, command, this.flags.getAllLikeObject())
           const data = await instance.handle()
 
-          if(typeof data !== 'undefined') {
+          if(data === false) {
             skip_command = true
             break
           }
