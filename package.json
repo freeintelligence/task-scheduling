@@ -2,7 +2,7 @@
   "name": "task-scheduling",
   "version": "1.0.0-rc.12",
   "description": "Argument management for console applications..",
-  "main": "./dist/index.js",
+  "main": "./serve/index.js",
   "scripts": {},
   "keywords": [
     "node",
@@ -35,7 +35,6 @@
     "@types/jest": "^24.0.11",
     "@types/node": "^11.13.4",
     "jest": "^24.7.1",
-    "ts-jest": "^24.0.2",
     "typescript": "^3.4.5"
   }
 }
