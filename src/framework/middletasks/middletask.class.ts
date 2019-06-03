@@ -19,9 +19,13 @@ export class BaseMiddletask {
   ) { }
 
   /**
-   *
+   * Handle method
    */
-  async handle(): Promise<any> {
-  }
+  async handle(): Promise<any> { }
+
+  /**
+   * Terminate method
+   */
+  async terminate(): Promise<any> { }
 
 }
