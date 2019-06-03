@@ -16,7 +16,7 @@ export class GlobalHelpFlagMiddletask extends BaseMiddletask {
    * Handle method
    */
   async handle() {
-    if(!this.flags.help.value) return true;
+    if(!this.scheduler.config.global_help || !this.flags.help.value) return true;
 
     this.scheduler.helper.reset()
 

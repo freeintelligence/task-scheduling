@@ -66,23 +66,11 @@ export class Scheduler {
     let last_command: BaseCommand
 
     try {
-      this.helper.reset()
-
-      if(inspector_command && inspector_command.value) {
-        inspector_command.used = true
-      }
-
       if(!commands.length && this.config.strict_mode_on_commands) {
         throw new CommandNotFoundError(inspector_command.value)
       }
 
       for(let command of commands) {
-        inspector.resetUsed()
-
-        if(inspector_command && inspector_command.value) {
-          inspector_command.used = true
-        }
-
         last_command = command
 
         let global_middletasks = this.middletasks.getAll()
