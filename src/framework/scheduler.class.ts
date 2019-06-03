@@ -76,26 +76,26 @@ export class Scheduler {
         throw new CommandNotFoundError(inspector_command.value)
       }
 
-      for(let command_index in commands) {
-        last_command = commands[command_index]
-
+      for(let command of commands) {
+        last_command = command
+        
         let global_middletasks = this.middletasks.getAll()
-        let command_middletasks = last_command.getMiddletasksLikeArray()
+        let command_middletasks = command.getMiddletasksLikeArray()
         let all_middletasks = global_middletasks.concat(command_middletasks)
         let skip_command = false
 
         inspector_extras.map(e => e.used = false)
         inspector_flags.map(e => e.used = false)
 
-        this.setCommandExtras(last_command, inspector_extras)
-        this.setFlagsValues(last_command, global_flags, inspector_flags, inspector_extras)
-        this.setTemporalExtras(last_command, inspector_extras.filter(e => !e.used))
-        this.setTemporalFlags(last_command, inspector_flags.filter(e => !e.used))
-        this.setGlobalFlagsToCommand(last_command, global_flags)
+        this.setCommandExtras(command, inspector_extras)
+        this.setFlagsValues(command, global_flags, inspector_flags, inspector_extras)
+        this.setTemporalExtras(command, inspector_extras.filter(e => !e.used))
+        this.setTemporalFlags(command, inspector_flags.filter(e => !e.used))
+        this.setGlobalFlagsToCommand(command, global_flags)
 
         for(let i in command_middletasks) {
           const middletask = command_middletasks[i]
-          const instance = new middletask(inspector, last_command, null)
+          const instance = new middletask(inspector, command, this.flags.getAllLikeObject())
           const data = await instance.handle()
 
           if(typeof data !== 'undefined') {
@@ -105,11 +105,11 @@ export class Scheduler {
         }
 
         if(!skip_command) {
-          result.push(await last_command.run({ flags: last_command.getFlagsLikeObject() }))
+          result.push(await command.run({ flags: command.getFlagsLikeObject() }))
         }
 
-        last_command.removeTemporalExtras()
-        last_command.removeTemporalFlags()
+        command.removeTemporalExtras()
+        command.removeTemporalFlags()
       }
 
       return result

@@ -61,6 +61,21 @@ export class Flags {
   }
 
   /**
+   * Get all flags like object
+   */
+  public getAllLikeObject(): { [key: string]: Flag } {
+    const flags: { [key: string]: Flag } = { }
+
+    for(let flag of this.container_flags) {
+      const name = flag.getFirstName()
+
+      flags[name] = flag
+    }
+
+    return flags
+  }
+
+  /**
    * Get flag by name
    */
   public getByName(name: string) {
