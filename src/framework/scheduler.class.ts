@@ -98,9 +98,9 @@ export class Scheduler {
 
         for(let middletask of all_middletasks) {
           const instance = new middletask(inspector, command, this.flags.getAllLikeObject())
-          const data = await instance.handle()
+          const response = typeof instance.handle == 'function' ? await instance.handle() : true
 
-          if(data === false) {
+          if(response === false) {
             skip_command = true
             break
           }
