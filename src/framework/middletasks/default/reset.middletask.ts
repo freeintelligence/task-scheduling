@@ -1,17 +1,20 @@
 import { BaseMiddletask } from './../../middletasks'
 import { Inspector } from './../../inspector'
+import { Scheduler } from './../../scheduler.class'
 
 /**
- * Global help flag
+ * Reset middletask
  */
-export class InspectorMiddletask extends BaseMiddletask {
+export class ResetMiddletask extends BaseMiddletask {
 
+  protected scheduler: Scheduler
   protected inspector: Inspector
 
   /**
    * Handle method
    */
   async handle() {
+    this.scheduler.helper.reset()
     this.inspector.resetUsed()
   }
 
