@@ -28,6 +28,13 @@ export class Inspector {
   }
 
   /**
+   * Reset data "used" (resources) to false
+   */
+  public resetUsed() {
+    return this.resources.map(e => e.used = false), this
+  }
+
+  /**
    * Is flag
    */
   public static isFlag(task: string): boolean {

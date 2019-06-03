@@ -77,15 +77,18 @@ export class Scheduler {
       }
 
       for(let command of commands) {
+        inspector.resetUsed()
+
+        if(inspector_command && inspector_command.value) {
+          inspector_command.used = true
+        }
+
         last_command = command
 
         let global_middletasks = this.middletasks.getAll()
         let command_middletasks = command.getMiddletasksLikeArray()
         let all_middletasks = global_middletasks.concat(command_middletasks)
         let skip_command = false
-
-        inspector_extras.map(e => e.used = false)
-        inspector_flags.map(e => e.used = false)
 
         this.setCommandExtras(command, inspector_extras)
         this.setFlagsValues(command, global_flags, inspector_flags, inspector_extras)
