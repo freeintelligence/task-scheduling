@@ -2,7 +2,6 @@ import { Helper } from './helper'
 import { Configure, Settings } from './configure'
 import { Inspector, Resource } from './inspector'
 import { Commands, BaseCommand } from './commands'
-import { Extra } from './extras'
 import { Flags, Flag } from './flags'
 import { Middletasks } from './middletasks'
 import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError, UnknownExtraError, CustomError } from './errors'
@@ -56,16 +55,13 @@ export class Scheduler {
   public async execute(tasks?: string[], limit?: number) {
     const result = []
     const inspector = this.inspector.thisOr(tasks)
-    const inspector_command = inspector.getCommand()
-    const commands = await this.commands.getByName(inspector_command.value, limit)
-    const global_flags = this.flags.getAll()
-    const global_commands = this.commands.getAll()
+    const commands = await this.commands.getByName(inspector.getCommand().value, limit)
 
     let last_command: BaseCommand
 
     try {
       if(!commands.length && this.config.strict_mode_on_commands) {
-        throw new CommandNotFoundError(inspector_command.value)
+        throw new CommandNotFoundError(inspector.getCommand().value)
       }
 
       for(let command of commands) {
@@ -104,39 +100,39 @@ export class Scheduler {
     }
     catch(err) {
       if(err instanceof CommandNotFoundError) {
-        err.stack = this.helper.setErrorCommandNotFound(err.command_name).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
+        err.stack = this.helper.setErrorCommandNotFound(err.command_name).setHeaderDefault().setFlags(this.flags.getAll()).setCommands(this.commands.getAll(), this.config.show_flags_on_help).generate().getMessage()
       }
       else if(err instanceof MissingExtrasError) {
-        err.stack = this.helper.setErrorMissingExtra(err.command.getMainName(), err.extra.beautyName()).setHeader(err.command.getCompleteName()).setFlags(global_flags.concat(err.command.getFlagsLikeArray())).generate().getMessage()
+        err.stack = this.helper.setErrorMissingExtra(err.command.getMainName(), err.extra.beautyName()).setHeader(err.command.getCompleteName()).setFlags(this.flags.getAll().concat(err.command.getFlagsLikeArray())).generate().getMessage()
       }
       else if(err instanceof RequiredFlagValueError) {
         if(err.command.getMainName() && err.command.getMainName().length) {
-          this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeader(err.command.getCompleteName()).setFlags(global_flags.concat(err.command.getFlagsLikeArray()))
+          this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeader(err.command.getCompleteName()).setFlags(this.flags.getAll().concat(err.command.getFlagsLikeArray()))
         }
         else {
-          this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help)
+          this.helper.setErrorRequiredFlagValue(err.flag.beautyName()).setHeaderDefault().setFlags(this.flags.getAll()).setCommands(this.commands.getAll(), this.config.show_flags_on_help)
         }
 
         err.stack = this.helper.generate().getMessage()
       }
       else if(err instanceof InvalidFlagValueError) {
         if(last_command.getMainName() && last_command.getMainName().length) {
-          this.helper.setErrorInvalidFlagValue(err.flag.beautyName(), err.expected, err.received).setHeader(last_command.getCompleteName()).setFlags(global_flags.concat(last_command.getFlagsLikeArray()))
+          this.helper.setErrorInvalidFlagValue(err.flag.beautyName(), err.expected, err.received).setHeader(last_command.getCompleteName()).setFlags(this.flags.getAll().concat(last_command.getFlagsLikeArray()))
         }
         else {
-          this.helper.setErrorInvalidFlagValue(err.flag.beautyName(), err.expected, err.received).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help)
+          this.helper.setErrorInvalidFlagValue(err.flag.beautyName(), err.expected, err.received).setHeaderDefault().setFlags(this.flags.getAll()).setCommands(this.commands.getAll(), this.config.show_flags_on_help)
         }
 
         err.stack = this.helper.generate().getMessage()
       }
       else if(err instanceof UnknownFlagError) {
-        err.stack = this.helper.setErrorUnknownFlag(err.flag).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
+        err.stack = this.helper.setErrorUnknownFlag(err.flag).setHeaderDefault().setFlags(this.flags.getAll()).setCommands(this.commands.getAll(), this.config.show_flags_on_help).generate().getMessage()
       }
       else if(err instanceof UnknownExtraError) {
-        err.stack = this.helper.setErrorUnknownExtra(err.extra).setHeader(last_command.getCompleteName()).setFlags(global_flags.concat(last_command.getFlagsLikeArray())).generate().getMessage()
+        err.stack = this.helper.setErrorUnknownExtra(err.extra).setHeader(last_command.getCompleteName()).setFlags(this.flags.getAll().concat(last_command.getFlagsLikeArray())).generate().getMessage()
       }
       else if(err instanceof CustomError) {
-        err.stack = this.helper.setError(err.message).setHeaderDefault().setFlags(global_flags).setCommands(global_commands, this.config.show_flags_on_help).generate().getMessage()
+        err.stack = this.helper.setError(err.message).setHeaderDefault().setFlags(this.flags.getAll()).setCommands(this.commands.getAll(), this.config.show_flags_on_help).generate().getMessage()
       }
 
       await this.config.catch(err)
