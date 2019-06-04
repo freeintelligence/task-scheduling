@@ -1,5 +1,6 @@
 import { Flag } from './../flags'
 import { InvalidFlagValueError } from './../errors'
+import { Resource } from'./../inspector'
 
 /*
  * Flags instance (global flags)
@@ -138,6 +139,60 @@ export class Flags {
     }
 
     return value
+  }
+
+  /**
+   * Set flag values by resources (Inspector instance data)
+   */
+  public static setValuesByResources(flags: Flag[], resources: Resource[], values_array: Resource[]) {
+    for(let flag of flags) {
+      if(flag.options.type !== 'array') {
+        const resource_flag = resources.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
+
+        if(!resource_flag && flag.isRequired()) {
+          return flag
+        }
+
+        flag.value = resource_flag && typeof resource_flag.value !== 'undefined' ? resource_flag.value : flag.getDefault()
+
+        if(resource_flag) {
+          resource_flag.used = true
+        }
+      }
+      else {
+        const resource_flag = resources.find(e => (!e.used && e.type == 'flag' && flag.getNames().indexOf(e.name) !== -1) || (!e.used && e.type == 'flag-alias' && flag.getAliases().indexOf(e.name) !== -1))
+
+        if(!resource_flag && flag.isRequired()) {
+          return flag
+        }
+        else if(!resource_flag && !flag.isRequired()) {
+          flag.value = flag.getDefault()
+        }
+        else {
+          const resource_values = values_array.filter(e => !e.used && e.index >= resource_flag.index)
+          const arr: any[] = []
+
+          if(!resource_values.length && flag.isRequired()) {
+            return flag
+          }
+
+          if(typeof resource_flag.value !== 'undefined' && typeof resource_flag.value != 'string' || (typeof resource_flag.value == 'string' && resource_flag.value.length)) {
+            resource_flag.used = true
+            arr.push(resource_flag.value)
+          }
+
+          resource_values.forEach(resource => {
+            arr.push(resource.value)
+            resource.used = true
+          })
+
+          flag.value = arr
+          resource_flag.used = true
+        }
+      }
+    }
+
+    return true
   }
 
   /**

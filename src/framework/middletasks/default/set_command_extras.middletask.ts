@@ -1,8 +1,4 @@
-import { Scheduler } from './../../scheduler.class'
 import { BaseMiddletask } from './../../middletasks'
-import { BaseCommand } from './../../commands'
-import { Extra } from './../../extras'
-import { Resource } from './../../inspector'
 import { MissingExtrasError } from './../../errors'
 
 /**
@@ -10,15 +6,12 @@ import { MissingExtrasError } from './../../errors'
  */
 export class SetCommandExtrasMiddletask extends BaseMiddletask {
 
-  protected scheduler: Scheduler
-  protected command: BaseCommand
-
   /**
    * Handle method
    */
   async handle() {
-    const to: Extra[] = this.command.getExtrasLikeArray()
-    const from: Resource[] = this.inspector.getExtras()
+    const to = this.command.getExtrasLikeArray()
+    const from = this.inspector.getExtras()
 
     for(let i = 0; i < to.length; i++) {
       const extra = to[i]

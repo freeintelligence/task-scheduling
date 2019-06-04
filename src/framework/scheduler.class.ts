@@ -4,7 +4,7 @@ import { Inspector, Resource } from './inspector'
 import { Commands, BaseCommand } from './commands'
 import { Extra } from './extras'
 import { Flags, Flag } from './flags'
-import { Middletasks, BaseMiddletask } from './middletasks'
+import { Middletasks } from './middletasks'
 import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError, UnknownExtraError, CustomError } from './errors'
 
 /**
@@ -57,8 +57,6 @@ export class Scheduler {
     const result = []
     const inspector = this.inspector.thisOr(tasks)
     const inspector_command = inspector.getCommand()
-    const inspector_extras = inspector.getExtras()
-    const inspector_flags = inspector.getFlags()
     const commands = await this.commands.getByName(inspector_command.value, limit)
     const global_flags = this.flags.getAll()
     const global_commands = this.commands.getAll()
@@ -73,10 +71,7 @@ export class Scheduler {
       for(let command of commands) {
         last_command = command
 
-        let global_middletasks = this.middletasks.getAll()
-        let command_middletasks = command.getMiddletasksLikeArray()
-        let all_middletasks = global_middletasks.concat(command_middletasks)
-        let all_middletasks_instances: BaseMiddletask[] = []
+        let middletasks_instances = this.middletasks.getAll().concat(command.getMiddletasksLikeArray()).map(constructor => new constructor(this, command, this.flags.getAllLikeObject(), inspector))
         let skip_command = false
 
         /*
@@ -84,11 +79,8 @@ export class Scheduler {
         this.setTemporalFlags(command, inspector_flags.filter(e => !e.used))
         this.setGlobalFlagsToCommand(command, global_flags)*/
 
-        for(let middletask of all_middletasks) {
-          const instance = new middletask(this, command, this.flags.getAllLikeObject(), inspector)
+        for(let instance of middletasks_instances) {
           const response = typeof instance.handle == 'function' ? await instance.handle() : true
-
-          all_middletasks_instances.push(instance)
 
           if(response === false) {
             skip_command = true
@@ -99,7 +91,7 @@ export class Scheduler {
         if(!skip_command) {
           result.push(await command.run({ flags: command.getFlagsLikeObject() }))
 
-          for(let instance of all_middletasks_instances) {
+          for(let instance of middletasks_instances) {
             if(typeof instance.terminate == 'function') {
               await instance.terminate()
             }

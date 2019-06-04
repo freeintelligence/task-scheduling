@@ -1,16 +1,9 @@
-import { Scheduler } from './../../scheduler.class'
 import { BaseMiddletask } from './../../middletasks'
-import { BaseCommand } from './../../commands'
-import { Flag } from './../../flags'
 
 /**
  * Global help flag
  */
 export class GlobalHelpFlagMiddletask extends BaseMiddletask {
-
-  protected scheduler: Scheduler
-  protected command: BaseCommand
-  protected flags: { [name: string]: Flag }
 
   /**
    * Handle method
