@@ -79,11 +79,11 @@ export class Scheduler {
         let all_middletasks_instances: BaseMiddletask[] = []
         let skip_command = false
 
-        this.setCommandExtras(command, inspector_extras)
+        /*
         this.setFlagsValues(command, global_flags, inspector_flags, inspector_extras)
         this.setTemporalExtras(command, inspector_extras.filter(e => !e.used))
         this.setTemporalFlags(command, inspector_flags.filter(e => !e.used))
-        this.setGlobalFlagsToCommand(command, global_flags)
+        this.setGlobalFlagsToCommand(command, global_flags)*/
 
         for(let middletask of all_middletasks) {
           const instance = new middletask(this, command, this.flags.getAllLikeObject(), inspector)
@@ -159,27 +159,6 @@ export class Scheduler {
    */
   public async executeByProcess() {
     return await this.execute(this.processArgv())
-  }
-
-  /**
-   * Set command extras values
-   */
-  private setCommandExtras(command: BaseCommand, from: Resource[]) {
-    const to: Extra[] = command.getExtrasLikeArray()
-
-    for(let i = 0; i < to.length; i++) {
-      const extra = to[i]
-
-      if(extra.isRequired() && (typeof from[i] == 'undefined' || typeof from[i].value == 'undefined')) {
-        throw new MissingExtrasError(command, extra)
-      }
-
-      extra.value = typeof from[i] !== 'undefined' ? from[i].value : extra.getDefault()
-
-      if(from[i]) {
-        from[i].used = true
-      }
-    }
   }
 
   /**

@@ -1,5 +1,5 @@
 import { BaseMiddletask } from './middletask.class'
-import { ResetMiddletask, GlobalHelpFlagMiddletask } from './default'
+import { ResetMiddletask, SetCommandExtrasMiddletask, GlobalHelpFlagMiddletask } from './default'
 
 /**
  * Middletasks instance
@@ -30,9 +30,10 @@ export class Middletasks {
    * Push default middletasks
    */
   private pushDefaults() {
-    this.push(ResetMiddletask)
-    this.push(GlobalHelpFlagMiddletask)
     return this
+    .push(ResetMiddletask)
+    .push(SetCommandExtrasMiddletask)
+    .push(GlobalHelpFlagMiddletask)
   }
 
   /**
