@@ -71,7 +71,6 @@ export class Scheduler {
         let skip_command = false
 
         /*
-        this.setTemporalFlags(command, inspector_flags.filter(e => !e.used))
         this.setGlobalFlagsToCommand(command, global_flags)*/
 
         for(let instance of middletasks_instances) {
@@ -92,8 +91,6 @@ export class Scheduler {
             }
           }
         }
-
-        command.removeTemporalFlags()
       }
 
       return result
@@ -144,21 +141,6 @@ export class Scheduler {
    */
   public async executeByProcess() {
     return await this.execute(this.processArgv())
-  }
-
-  /**
-   * Try create temporal flags
-   */
-  private setTemporalFlags(command: BaseCommand, flags: Resource[]) {
-    flags.forEach(flag => {
-      if(this.config.strict_mode_on_flags) throw new UnknownFlagError(flag.name);
-
-      const instance = new Flag(flag.name, { default: flag.value, type: 'string', temporal: true })
-      command.addTemporalFlag(instance)
-
-      instance.value = flag.value
-      flag.used = true
-    })
   }
 
   /**
