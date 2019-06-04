@@ -67,8 +67,6 @@ export class SetGlobalFlagsMiddletask extends BaseMiddletask {
         }
       }
     }
-
-    console.log('post flags', this.flags)
   }
 
 }
