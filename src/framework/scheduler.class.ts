@@ -75,7 +75,6 @@ export class Scheduler {
         let skip_command = false
 
         /*
-        this.setTemporalExtras(command, inspector_extras.filter(e => !e.used))
         this.setTemporalFlags(command, inspector_flags.filter(e => !e.used))
         this.setGlobalFlagsToCommand(command, global_flags)*/
 
@@ -98,7 +97,6 @@ export class Scheduler {
           }
         }
 
-        command.removeTemporalExtras()
         command.removeTemporalFlags()
       }
 
@@ -150,21 +148,6 @@ export class Scheduler {
    */
   public async executeByProcess() {
     return await this.execute(this.processArgv())
-  }
-
-  /**
-   * Try create temporal extras
-   */
-  private setTemporalExtras(command: BaseCommand, extras: Resource[]) {
-    extras.forEach(extra => {
-      if(this.config.strict_mode_on_extras) throw new UnknownExtraError(extra.value);
-
-      const instance = new Extra('temporal-extra-'+new Date().getTime().toString(), { default: extra.value })
-      command.addTemporalExtra(instance)
-
-      instance.value = extra.value
-      extra.used = true
-    })
   }
 
   /**

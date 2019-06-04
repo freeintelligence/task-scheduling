@@ -1,5 +1,5 @@
 import { BaseMiddletask } from './middletask.class'
-import { ResetMiddletask, SetCommandExtrasMiddletask, GlobalHelpFlagMiddletask, SetGlobalFlagsMiddletask, SetCommandFlagsMiddletask } from './default'
+import { ResetMiddletask, SetCommandExtrasMiddletask, GlobalHelpFlagMiddletask, SetGlobalFlagsMiddletask, SetCommandFlagsMiddletask, SetCommandTemporalExtrasMiddletask } from './default'
 
 /**
  * Middletasks instance
@@ -35,6 +35,7 @@ export class Middletasks {
     .push(SetGlobalFlagsMiddletask)
     .push(SetCommandFlagsMiddletask)
     .push(SetCommandExtrasMiddletask)
+    .push(SetCommandTemporalExtrasMiddletask)
     .push(GlobalHelpFlagMiddletask)
   }
 
