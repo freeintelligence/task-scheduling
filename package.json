@@ -1,8 +1,8 @@
 {
   "name": "task-scheduling",
-  "version": "1.0.0-rc.12",
+  "version": "1.0.0-rc.13",
   "description": "Argument management for console applications..",
-  "main": "./serve/index.js",
+  "main": "./dist/index.js",
   "scripts": {},
   "keywords": [
     "node",
