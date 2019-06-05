@@ -3,9 +3,9 @@ import { Extra } from './../../extras'
 import { UnknownExtraError } from './../../errors'
 
 /**
- * Set command temporal extras
+ * Add to command temporal extras
  */
-export class SetCommandTemporalExtrasMiddletask extends BaseMiddletask {
+export class AddCommandTemporalExtrasMiddletask extends BaseMiddletask {
 
   /**
    * Handle method

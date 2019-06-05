@@ -2,9 +2,9 @@ import { BaseMiddletask } from './../../middletasks'
 import { MissingExtrasError } from './../../errors'
 
 /**
- * Set command extras
+ * Set command extras values
  */
-export class SetCommandExtrasMiddletask extends BaseMiddletask {
+export class SetCommandExtrasValuesMiddletask extends BaseMiddletask {
 
   /**
    * Handle method

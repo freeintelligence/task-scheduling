@@ -2,9 +2,9 @@ import { BaseMiddletask } from './../../middletasks'
 import { Flag } from './../../flags'
 
 /**
- * Set global flags to command (temporal flags)
+ * Add global flags to command (temporal flags)
  */
-export class SetGlobalFlagsToCommandMiddletask extends BaseMiddletask {
+export class AddGlobalFlagsToCommandMiddletask extends BaseMiddletask {
 
   /**
    * Handle method

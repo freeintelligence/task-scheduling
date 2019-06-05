@@ -3,9 +3,9 @@ import { Flags } from './../../flags'
 import { RequiredFlagValueError } from './../../errors'
 
 /**
- * Set command flags
+ * Set command flags values
  */
-export class SetCommandFlagsMiddletask extends BaseMiddletask {
+export class SetCommandFlagsValuesMiddletask extends BaseMiddletask {
 
   /**
    * Handle method

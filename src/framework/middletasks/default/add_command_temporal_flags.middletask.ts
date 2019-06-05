@@ -3,9 +3,9 @@ import { Flag } from './../../flags'
 import { UnknownFlagError } from './../../errors'
 
 /**
- * Set command temporal flags
+ * Add to command temporal flags
  */
-export class SetCommandTemporalFlagsMiddletask extends BaseMiddletask {
+export class AddCommandTemporalFlagsMiddletask extends BaseMiddletask {
 
   /**
    * Handle method
