@@ -1,8 +1,8 @@
 import { Helper } from './helper'
 import { Configure, Settings } from './configure'
-import { Inspector, Resource } from './inspector'
+import { Inspector } from './inspector'
 import { Commands, BaseCommand } from './commands'
-import { Flags, Flag } from './flags'
+import { Flags } from './flags'
 import { Middletasks } from './middletasks'
 import { CommandNotFoundError, MissingExtrasError, RequiredFlagValueError, InvalidFlagValueError, UnknownFlagError, UnknownExtraError, CustomError } from './errors'
 
