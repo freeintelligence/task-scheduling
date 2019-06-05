@@ -70,9 +70,6 @@ export class Scheduler {
         let middletasks_instances = this.middletasks.getAll().concat(command.getMiddletasksLikeArray()).map(constructor => new constructor(this, command, this.flags.getAllLikeObject(), inspector))
         let skip_command = false
 
-        /*
-        this.setGlobalFlagsToCommand(command, global_flags)*/
-
         for(let instance of middletasks_instances) {
           const response = typeof instance.handle == 'function' ? await instance.handle() : true
 
@@ -141,18 +138,6 @@ export class Scheduler {
    */
   public async executeByProcess() {
     return await this.execute(this.processArgv())
-  }
-
-  /**
-   *
-   */
-  private setGlobalFlagsToCommand(command: BaseCommand, flags: Flag[]) {
-    flags.forEach(flag => {
-      const instance = new Flag(flag.getAllNames(), { default: flag.value, type: flag.options.type, subtype: flag.options.subtype, description: flag.getDescription(), temporal: true })
-      command.addTemporalFlag(instance)
-
-      instance.value = flag.value
-    })
   }
 
   /**
