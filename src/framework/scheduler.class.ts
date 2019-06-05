@@ -65,10 +65,10 @@ export class Scheduler {
       }
 
       skip_command:
-      for(let command of commands) {
+      for(const command of commands) {
         last_command = command
 
-        let middletasks_instances = this.middletasks.getAll().concat(command.getMiddletasksLikeArray()).map(constructor => new constructor(this, command, this.flags.getAllLikeObject(), inspector))
+        const middletasks_instances = this.middletasks.getAll().concat(command.getMiddletasksLikeArray()).map(constructor => new constructor(this, command, this.flags.getAllLikeObject(), inspector))
 
         for(let instance of middletasks_instances) {
           if((typeof instance.handle == 'function' ? await instance.handle() : true) === false) {
