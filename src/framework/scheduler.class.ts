@@ -64,28 +64,23 @@ export class Scheduler {
         throw new CommandNotFoundError(inspector.getCommand().value)
       }
 
+      skip_command:
       for(let command of commands) {
         last_command = command
 
         let middletasks_instances = this.middletasks.getAll().concat(command.getMiddletasksLikeArray()).map(constructor => new constructor(this, command, this.flags.getAllLikeObject(), inspector))
-        let skip_command = false
 
         for(let instance of middletasks_instances) {
-          const response = typeof instance.handle == 'function' ? await instance.handle() : true
-
-          if(response === false) {
-            skip_command = true
-            break
+          if((typeof instance.handle == 'function' ? await instance.handle() : true) === false) {
+            continue skip_command
           }
         }
 
-        if(!skip_command) {
-          result.push(await command.run({ flags: command.getFlagsLikeObject() }))
+        result.push(await command.run({ flags: command.getFlagsLikeObject() }))
 
-          for(let instance of middletasks_instances) {
-            if(typeof instance.terminate == 'function') {
-              await instance.terminate()
-            }
+        for(let instance of middletasks_instances) {
+          if(typeof instance.terminate == 'function') {
+            await instance.terminate()
           }
         }
       }
